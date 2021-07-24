@@ -3,6 +3,7 @@ on:
   push:
     tags:
       - "*"
+
 jobs:
   linux:
     runs-on: ubuntu-18.04
@@ -10,25 +11,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install Python
-        uses: actions/setup-python@v2
+      - name: Install Golang
+        uses: actions/setup-go@v2
         with:
-          python-version: '3.9'
-
-      - name: Install pyinstaller
-        run: |
-          pip install pyinstaller==4.3
+          go-version: '1.16.3'
 
       - name: Build exe
         run: |
           cd yyetsweb
-          pyinstaller -F server.spec
-          mv dist/yyetsweb dist/yyetsweb-linux
+          make
+          mv yyetsweb yyetsweb-linux
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: yyetsweb/dist/*
+          files: yyetsweb/yyetsweb-linux
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -39,25 +36,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install Python
-        uses: actions/setup-python@v2
+      - name: Install Golang
+        uses: actions/setup-go@v2
         with:
-          python-version: '3.9'
-
-      - name: Install pyinstaller
-        run: |
-          pip install pyinstaller==4.3
+          go-version: '1.16'
 
       - name: Build exe
         run: |
           cd yyetsweb
-          pyinstaller -F server.spec
-          mv dist\yyetsweb.exe dist\yyetsweb-windows.exe
+          make
+          mv yyetsweb.exe yyetsweb-windows.exe
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: yyetsweb/dist/*
+          files: yyetsweb/yyetsweb-windows.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -67,24 +60,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install Python
-        uses: actions/setup-python@v2
+      - name: Install Golang
+        uses: actions/setup-go@v2
         with:
-          python-version: '3.9'
-
-      - name: Install pyinstaller
-        run: |
-          pip install pyinstaller==4.3
+          go-version: '1.16.3'
 
       - name: Build exe
         run: |
           cd yyetsweb
-          pyinstaller -F server.spec
-          mv dist/yyetsweb dist/yyetsweb-darwin
+          make
+          mv yyetsweb yyetsweb-darwin
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: yyetsweb/dist/*
+          files: yyetsweb/yyetsweb-darwin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
