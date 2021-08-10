@@ -40,6 +40,7 @@
 ###### luci-app-adblock-plus    #adblock-plus去广告插件，支持 AdGuardHome/Host/DNSMASQ/Domain 格式的规则订阅
 ###### luci-app-godproxy   #GodProxy是基于koolproxyR Plus+重新整理而来
 ###### luci-app-serverchan    #微信推送
+###### luci-app-pushbot    #基于原版微信推送修改，支持更多协议
 ###### luci-app-smartdns   #smartdns DNS加速
 ###### luci-app-poweroff    #关机（增加关机功能）
 ###### luci-app-oaf （OpenAppFilter）  #应用过滤 ，该模块只工作在路由模式， 旁路模式、桥模式不生效，还有和Turbo ACC 网络加速有冲突
