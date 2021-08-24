@@ -16,7 +16,7 @@
 ###### luci-app-openclash
 #
 ### 主题
-###### luci-theme-atmaterial   #atmaterial-三合一主题
+###### luci-theme-atmaterial_new   #atmaterial-三合一主题
 ###### luci-theme-material   #material-主题
 ###### luci-theme-opentomcat   #主题-opentomcat（仿kool固件主题）
 ###### luci-app-argon-config    #argon主题设置（编译时候选上,在固件的‘系统’里面）
