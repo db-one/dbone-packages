@@ -358,10 +358,16 @@ class CommentHandler(BaseHandler):
         page = int(self.get_argument("page", "1"))
         inner_size = int(self.get_argument("inner_size", "5"))
         inner_page = int(self.get_argument("inner_page", "1"))
+        comment_id = self.get_argument("comment_id", None)
+
         if not resource_id:
             self.set_status(HTTPStatus.BAD_REQUEST)
             return {"status": False, "message": "请提供resource id"}
-        comment_data = self.instance.get_comment(resource_id, page, size, inner_size=inner_size, inner_page=inner_page)
+        comment_data = self.instance.get_comment(
+            resource_id, page, size,
+            inner_size=inner_size, inner_page=inner_page,
+            comment_id=comment_id
+        )
         self.hide_phone((comment_data["data"]))
         return comment_data
 

@@ -12,6 +12,7 @@ import os
 import platform
 
 import pytz
+import tornado.autoreload
 from apscheduler.schedulers.background import BackgroundScheduler
 from tornado import httpserver, ioloop, options, web
 from tornado.log import enable_pretty_logging
@@ -19,7 +20,7 @@ from tornado.log import enable_pretty_logging
 from handler import (AnnouncementHandler, BlacklistHandler, CaptchaHandler,
                      CategoryHandler, CommentChildHandler, CommentHandler,
                      CommentNewestHandler, CommentReactionHandler,
-                     CommentSearchHandler, DBDumpHandler, DoubanHandler,
+                      DBDumpHandler, DoubanHandler,
                      DoubanReportHandler, GrafanaIndexHandler,
                      GrafanaQueryHandler, GrafanaSearchHandler, IndexHandler,
                      LikeHandler, MetricsHandler, NameHandler, NotFoundHandler,
@@ -51,7 +52,6 @@ class RunServer:
         (r'/api/comment/reaction', CommentReactionHandler),
         (r'/api/comment/child', CommentChildHandler),
         (r'/api/comment/newest', CommentNewestHandler),
-        (r'/api/comment/search', CommentSearchHandler),
         (r'/api/captcha', CaptchaHandler),
         (r'/api/metrics', MetricsHandler),
         (r'/api/grafana/', GrafanaIndexHandler),
@@ -81,8 +81,9 @@ class RunServer:
     def run_server(port, host):
         tornado_server = httpserver.HTTPServer(RunServer.application, xheaders=True)
         tornado_server.bind(port, host)
-        if platform.uname().system == "Windows":
+        if platform.uname().system in ("Windows", "Darwin"):
             tornado_server.start(1)
+            tornado.autoreload.start()
         else:
             tornado_server.start(0)
 
@@ -99,7 +100,7 @@ if __name__ == "__main__":
     scheduler = BackgroundScheduler(timezone=timez)
     scheduler.add_job(OtherMongoResource().reset_top, 'cron', hour=0, minute=0, day=1)
     scheduler.add_job(sync_douban, 'cron', hour=0, minute=0, day=1)
-    scheduler.add_job(ResourceLatestMongoResource().refresh_latest_resource, 'cron', minute=0)
+    # scheduler.add_job(ResourceLatestMongoResource().refresh_latest_resource, 'cron', hour=1)
     scheduler.start()
     options.define("p", default=8888, help="running port", type=int)
     options.define("h", default='127.0.0.1', help="listen address", type=str)
