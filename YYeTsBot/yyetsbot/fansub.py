@@ -22,6 +22,7 @@ from bs4 import BeautifulSoup
 from config import (BD2020_SEARCH, FANSUB_ORDER, FIX_SEARCH, MONGO,
                     NEWZMZ_RESOURCE, NEWZMZ_SEARCH, REDIS, WORKERS,
                     XL720_SEARCH, ZHUIXINFAN_RESOURCE, ZHUIXINFAN_SEARCH)
+from bson.objectid import ObjectId
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(filename)s [%(levelname)s]: %(message)s')
 
@@ -172,7 +173,8 @@ class YYeTsOffline(BaseFansub):
     def __init__(self, db="zimuzu", col="yyets"):
         super().__init__()
         self.mongo = pymongo.MongoClient(host=MONGO)
-        self.collection = self.mongo[db][col]
+        self.db = self.mongo[db]
+        self.collection = self.db[col]
 
     @Redis.preview_cache(60)
     def search_preview(self, search_text: str) -> dict:
@@ -199,18 +201,46 @@ class YYeTsOffline(BaseFansub):
                 "class": self.__class__.__name__
             }
 
-        logging.info("[%s] Offline search complete", self.__class__.__name__)
+        logging.info("[%s] Offline resource search complete", self.__class__.__name__)
+
+        comments = self.db["comment"].find({"content": {"$regex": f".*{search_text}.*", "$options": "-i"}})
+        for c in comments:
+            url = "https://yyets.dmesg.app/resource.html?id={}#{}".format(c["resource_id"], str(c["_id"]))
+            url_hash = hashlib.sha1(url.encode('u8')).hexdigest()
+            all_name = c["content"]
+            results[url_hash] = {
+                "name": all_name,
+                "url": url,
+                "class": self.__class__.__name__
+            }
+        logging.info("[%s] Offline comment search complete", self.__class__.__name__)
+
         results["class"] = self.__class__.__name__
         return results
 
     @Redis.result_cache(10 * 60)
     def search_result(self, resource_url) -> dict:
         # yyets offline
-        # https://yyets.dmesg.app/resource.html?id=37089
-        rid = resource_url.split("id=")[1]
-        data: dict = self.collection.find_one({"data.info.id": int(rid)}, {'_id': False})
-        name = data["data"]["info"]["cnname"]
-        return {"all": json.dumps(data, ensure_ascii=False), "share": WORKERS.format(id=rid), "cnname": name}
+
+        # resource: https://yyets.dmesg.app/resource.html?id=37089
+        # comment: 'https://yyets.dmesg.app/resource.html?id=233#61893ae51e9152e43fa24124'
+        if "#" in resource_url:
+            cid = resource_url.split("#")[1]
+            data: dict = self.db["comment"].find_one(
+                {"_id": ObjectId(cid)},
+                {'_id': False, "ip": False, "type": False, "children": False, "browser": False}
+            )
+            share = resource_url
+            name = f"{data['username']} 的分享"
+            t = "comment"
+        else:
+            rid = resource_url.split("id=")[1]
+            data: dict = self.collection.find_one({"data.info.id": int(rid)}, {'_id': False})
+            name = data["data"]["info"]["cnname"]
+            share = WORKERS.format(id=rid)
+            t = "resource"
+
+        return {"all": json.dumps(data, ensure_ascii=False, indent=4), "share": share, "cnname": name, "type": t}
 
     def __del__(self):
         self.mongo.close()
