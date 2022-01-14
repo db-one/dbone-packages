@@ -2554,3 +2554,9 @@ body.lang_pl.node-main-login .cbi-value-title {
         max-width: 20rem;
     }
 }
+
+.cbi-value-title {
+    width: 23rem;
+    text-align: right;
+}
+
