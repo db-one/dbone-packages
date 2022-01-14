@@ -22,7 +22,7 @@
 ###### luci-app-argon-config    #argon主题设置（编译时候选上,在固件的‘系统’里面）
 ###### luci-theme-infinityfreedom    #透明主题
 ###### luci-theme-rosy    #主题-rosy
-###### luci-theme-neobird    #主题-小清新 neobird
+###### luci-theme-neobird    #主题-小清新 Neobird
 #
 ###  插件
 ###### luci-app-adguardhome   #adguardhome
