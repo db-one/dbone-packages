@@ -201,7 +201,7 @@ select[multiple="multiple"] {
 }
 
 input[type='text'],input[type='password'] {
-    width: 185px;
+    width: 290px;
 }
 code {
     color: #0099CC;
