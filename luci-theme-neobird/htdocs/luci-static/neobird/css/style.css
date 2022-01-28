@@ -706,7 +706,6 @@ p#shadowsocksr_status {
     display: block;
     border-radius: 6px;
     cursor: pointer;
-    font-weight: bold;
     font-size: 1.1rem;
 }
 
@@ -1503,7 +1502,7 @@ div > .cbi-value:nth-of-type(2n) {
 }
 
 .cbi-page-actions {
-    text-align: right;
+    text-align: center;
 }
 
 /* input */
