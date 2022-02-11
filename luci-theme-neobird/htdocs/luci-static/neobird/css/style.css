@@ -1549,7 +1549,7 @@ div > .cbi-value:nth-of-type(2n) {
 }
 
 .cbi-page-actions {
-    text-align: center;
+    text-align: right;
 }
 
 /* input */
