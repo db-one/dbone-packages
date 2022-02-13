@@ -33,7 +33,7 @@ GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:=main.Version=v$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
-include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
+include ../../lang/golang/golang-package.mk
 
 define Package/baidupcs-web
   TITLE:=BaiduPCS-Web is a web controller for BaiduPCS-Go
@@ -45,7 +45,7 @@ define Package/baidupcs-web
 endef
 
 define Package/baidupcs-web/description
-BaiduPCS-Web is a web controller for BaiduPCS-Go
+  BaiduPCS-Web is a web controller for BaiduPCS-Go
 endef
 
 define Package/baidupcs-web/config

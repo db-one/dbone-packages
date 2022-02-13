@@ -48,4 +48,3 @@ define Package/gmediarender/install
 endef
 
 $(eval $(call BuildPackage,gmediarender))
-
