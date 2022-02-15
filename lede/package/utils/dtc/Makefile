@@ -1,9 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0
 #
 # Copyright (C) 2016-2019 Yousong Zhou <yszhou4tech@gmail.com>
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
 
 include $(TOPDIR)/rules.mk
 
@@ -22,6 +19,7 @@ PKG_LICENSE_FILES:=GPL
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/meson.mk
 
 define Package/dtc
   SECTION:=utils
@@ -38,7 +36,7 @@ endef
 
 define Package/dtc/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(CP) $(PKG_INSTALL_DIR)/bin/dtc $(1)/usr/bin
+	$(CP) $(PKG_INSTALL_DIR)/usr/bin/dtc $(1)/usr/bin
 endef
 
 
@@ -53,11 +51,11 @@ endef
 
 define Package/fdt-utils/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/convert-dtsv0 $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/fdtdump $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/fdtget $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/fdtput $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/fdtoverlay $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/convert-dtsv0 $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/fdtdump $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/fdtget $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/fdtput $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/fdtoverlay $(1)/usr/bin
 endef
 
 
@@ -74,22 +72,20 @@ endef
 
 define Package/libfdt/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/lib/libfdt*.so* $(1)/usr/lib
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libfdt*.so* $(1)/usr/lib
 endef
 
-# NO_PYTHON is for disabling pylibfdt
-MAKE_FLAGS += \
-	PREFIX= \
-	NO_PYTHON=1 \
-	NO_VALGRIND=1 \
-	NO_YAML=1 \
-	EXTRA_CFLAGS=$(EXTRA_CFLAGS) \
+MESON_ARGS += \
+	-Dtools=true \
+	-Dyaml=disabled \
+	-Dvalgrind=disabled \
+	-Dpython=disabled
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_DIR) $(1)/usr/include
-	$(CP) $(PKG_INSTALL_DIR)/include/* $(1)/usr/include
-	$(CP) $(PKG_INSTALL_DIR)/lib/* $(1)/usr/lib
+	$(CP) $(PKG_INSTALL_DIR)/usr/include/* $(1)/usr/include
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/* $(1)/usr/lib
 endef
 
 $(eval $(call BuildPackage,dtc))
