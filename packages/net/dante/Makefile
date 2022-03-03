@@ -8,18 +8,19 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dante
-PKG_VERSION:=1.4.1
-PKG_RELEASE:=4
+PKG_VERSION:=1.4.3
+PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://www.inet.no/dante/files/
-PKG_HASH:=b6d232bd6fefc87d14bf97e447e4fcdeef4b28b16b048d804b50b48f261c4f53
+PKG_HASH:=418a065fe1a4b8ace8fbf77c2da269a98f376e7115902e76cda7e741e4846a5d
 
-PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
+PKG_MAINTAINER:=David Yang <mmyangfl@gmail.com>
 PKG_LICENSE:=BSD-4-Clause
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
+PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -85,9 +86,19 @@ $(call Package/dante/default/description)
 This package provides the Dante sockd daemon.
 endef
 
+define Package/sockd/conffiles
+/etc/sockd.conf
+endef
+
 define Package/sockd/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(CP) $(PKG_INSTALL_DIR)/usr/sbin/sockd $(1)/usr/sbin/
+
+	$(INSTALL_DIR) $(1)/etc
+	$(CP) $(PKG_BUILD_DIR)/example/sockd.conf $(1)/etc/
+
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/sockd.init $(1)/etc/init.d/sockd
 endef
 
 
@@ -104,12 +115,19 @@ $(call Package/dante/default/description)
 This package provides the Dante socksify client.
 endef
 
+define Package/socksify/conffiles
+/etc/socks.conf
+endef
+
 define Package/socksify/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/socksify $(1)/usr/bin/
 
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libdsocks.so* $(1)/usr/lib/
+
+	$(INSTALL_DIR) $(1)/etc
+	$(CP) $(PKG_BUILD_DIR)/example/socks.conf $(1)/etc/
 endef
 
 
