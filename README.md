@@ -27,7 +27,6 @@
 ###  插件
 ###### luci-app-adguardhome   #adguardhome
 ###### luci-app-netdata   #netdata信息监控
-###### luci-app-koolddns   #kool论坛的DNS
 ###### luci-app-aliddns    #aliddns
 ###### luci-app-eqos    #内网控速 内网IP限速工具
 ###### luci-app-cpulimit   #CPU性能限制
@@ -38,7 +37,6 @@
 ###### luci-app-control-webrestriction   #访问限制
 ###### luci-app-socat   #端口转发
 ###### luci-app-ddnsto    #小宝开发的DDNS.to内网穿透
-###### luci-app-adblock-plus    #adblock-plus去广告插件，支持 AdGuardHome/Host/DNSMASQ/Domain 格式的规则订阅
 ###### luci-app-ikoolproxy   #ikoolproxy是基于koolproxyR Plus+重新整理而来
 ###### luci-app-serverchan    #微信推送
 ###### luci-app-pushbot    #基于原版微信推送修改，支持更多协议
