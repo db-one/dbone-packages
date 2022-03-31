@@ -1375,7 +1375,7 @@ start_haproxy() {
 		listen console
 		    bind 0.0.0.0:$console_port
 		    mode http
-		    stats refresh 2s
+		    stats refresh 3s
 		    stats uri /
 #		    stats admin if TRUE
 		    $auth
