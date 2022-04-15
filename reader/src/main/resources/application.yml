@@ -1,0 +1,23 @@
+reader:
+  app:
+    storagePath: storage
+    showUI: false
+    debug: false
+    packaged: false
+    secure: false
+    inviteCode: ""
+    secureKey: ""
+    proxy: false
+    proxyType: "HTTP"
+    proxyHost: ""
+    proxyPort: ""
+    proxyUsername: ""
+    proxyPassword: ""
+    cacheChapterContent: false
+
+  server:
+    port: 8080
+    webUrl: http://localhost:${reader.server.port}
+
+logging:
+  path: "./logs"
