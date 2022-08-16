@@ -1,13 +1,12 @@
 {
   "name": "reader",
-  "version": "2.5.8",
+  "version": "2.5.4",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "sync": "yarn build && rm -rf ../src/main/resources/web && mv dist ../src/main/resources/web",
-    "sync-tauri": "yarn build && rm -rf ../tauri/dist && mv dist ../tauri/dist"
+    "sync": "yarn build && rm -rf ../src/main/resources/web && mv dist ../src/main/resources/web"
   },
   "dependencies": {
     "axios": "^0.21.1",

@@ -56,7 +56,7 @@ apply(plugin = "kotlin")
 apply(plugin = "io.github.fvarrui.javapackager.plugin")
 
 group = "com.htmake"
-version = "2.5.8"
+version = "2.5.4"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -75,8 +75,6 @@ val compileOnly by configurations.getting {
     extendsFrom(configurations["annotationProcessor"])
 }
 
-extra["netty.version"] = "4.1.42.Final"
-
 dependencies {
     val kotlin_version: String by extra{"1.5.21"}
     // val kotlin_version: String by extra
@@ -84,11 +82,11 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
     // vertx
-    implementation("io.vertx:vertx-core:3.8.5")
-    implementation("io.vertx:vertx-lang-kotlin:3.8.5")
-    implementation("io.vertx:vertx-lang-kotlin-coroutines:3.8.5")
-    implementation("io.vertx:vertx-web:3.8.5")
-    implementation("io.vertx:vertx-web-client:3.8.5")
+    implementation("io.vertx:vertx-core:3.8.1")
+    implementation("io.vertx:vertx-lang-kotlin:3.8.1")
+    implementation("io.vertx:vertx-lang-kotlin-coroutines:3.8.1")
+    implementation("io.vertx:vertx-web:3.8.1")
+    implementation("io.vertx:vertx-web-client:3.8.1")
 
     // json
     implementation("com.google.code.gson:gson:2.8.5")
@@ -127,9 +125,6 @@ dependencies {
 
     // 转换繁体
     // implementation("com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.2.1")
-
-    // database
-    implementation("org.mongodb:mongodb-driver-sync:3.8.2")
 }
 
 // val compileKotlin: KotlinCompile by tasks

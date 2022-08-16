@@ -6,10 +6,6 @@ task=$1
 
 version=""
 
-rootDir=$(cd "$(dirname "$0")";pwd)
-
-cd $rootDir
-
 checkJava()
 {
     if [ -d /Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home ]; then
@@ -29,13 +25,13 @@ getVersion()
     version=$(grep -Eo "^version = .*" $1 | grep -Eo "['\"].*['\"]" | tr -d "'\"")
 }
 
-getVersion $rootDir/build.gradle.kts
+getVersion ./build.gradle.kts
 
 case $task in
     build)
         checkJava
         # 调试打包
-        $rootDir/gradlew buildReader
+        ./gradlew buildReader
     ;;
     run)
         checkJava
@@ -44,7 +40,7 @@ case $task in
         if [[ -z "$port" ]]; then
             port=8080
         fi
-        $rootDir/gradlew assemble --info
+        ./gradlew assemble --info
         if test $? -eq 0; then
             shift
             shift
@@ -54,17 +50,17 @@ case $task in
     win)
         checkJava
         # 打包 windows 安装包
-        JAVAFX_PLATFORM=win $rootDir/gradlew packageReaderWin
+        JAVAFX_PLATFORM=win ./gradlew packageReaderWin
     ;;
     linux)
         checkJava
         # 打包 linux 安装包
-        JAVAFX_PLATFORM=linux $rootDir/gradlew packageReaderLinux
+        JAVAFX_PLATFORM=linux ./gradlew packageReaderLinux
     ;;
     mac)
         checkJava
         # 打包 mac 安装包
-        JAVAFX_PLATFORM=mac $rootDir/gradlew packageReaderMac
+        JAVAFX_PLATFORM=mac ./gradlew packageReaderMac
     ;;
     serve)
         # 服务端一键运行
@@ -73,8 +69,8 @@ case $task in
             port=8080
         fi
         mv src/main/java/com/htmake/reader/ReaderUIApplication.kt src/main/java/com/htmake/reader/ReaderUIApplication.kt.back
-        getVersion $rootDir/cli.gradle
-        $rootDir/gradlew -b cli.gradle assemble --info
+        getVersion ./cli.gradle
+        ./gradlew -b cli.gradle assemble --info
         if test $? -eq 0; then
             shift
             shift
@@ -89,52 +85,29 @@ case $task in
         shift
         export JAVA_HOME=$oldJAVAHome
         mv src/main/java/com/htmake/reader/ReaderUIApplication.kt src/main/java/com/htmake/reader/ReaderUIApplication.kt.back
-        getVersion $rootDir/cli.gradle
-        $rootDir/gradlew -b cli.gradle $@
+        getVersion ./cli.gradle
+        ./gradlew -b cli.gradle $@
         mv src/main/java/com/htmake/reader/ReaderUIApplication.kt.back src/main/java/com/htmake/reader/ReaderUIApplication.kt
     ;;
     yarn)
         # yarn 快捷命令，默认 install
         shift
-        cd $rootDir/web
+        cd web
         yarn $@
     ;;
     web)
         # 开发web页面
-        cd $rootDir/web
+        cd web
         yarn serve
     ;;
     sync)
         # 编译同步web资源
-        cd $rootDir/web
+        cd web
         yarn sync
-    ;;
-    sync-tauri)
-        cd $rootDir
-        mv src/main/java/com/htmake/reader/ReaderUIApplication.kt src/main/java/com/htmake/reader/ReaderUIApplication.kt.back
-        getVersion $rootDir/cli.gradle
-        $rootDir/gradlew -b cli.gradle assemble --info
-        if test $? -eq 0; then
-            cp -f build/libs/reader-$version.jar tauri/src-tauri/resources/reader.jar
-        fi
-        mv src/main/java/com/htmake/reader/ReaderUIApplication.kt.back src/main/java/com/htmake/reader/ReaderUIApplication.kt
-
-        cd $rootDir/web
-        yarn sync-tauri
-    ;;
-    tauri)
-        shift
-        cd $rootDir/tauri
-        yarn tauri $@
-    ;;
-    tyarn)
-        shift
-        cd $rootDir/tauri
-        yarn $@
     ;;
     *)
         echo "
-USAGE: $0 build|run|win|linux|mac|serve|cli|yarn|web|sync
+USAGE: ./build.sh build|run|win|linux|mac|serve|cli|yarn|web|sync
 
 build   调试打包
 run     桌面端编译运行，需要先执行 sync 命令编译同步web资源

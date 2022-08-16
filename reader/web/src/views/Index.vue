@@ -140,12 +140,6 @@
         <div class="setting-wrapper">
           <div class="setting-title">
             后端设定
-            <span
-              class="right-text"
-              v-if="isTauri"
-              @click="$router.push({ path: '/setting' })"
-              >设置</span
-            >
           </div>
           <div class="setting-item">
             <el-tag
@@ -279,7 +273,7 @@
               type="info"
               :effect="$store.getters.isNight ? 'dark' : 'light'"
               class="setting-btn"
-              @click="showFileManagerDialog('__LOCAL_STORE__', '书仓文件管理')"
+              @click="showLocalStoreManageDialog = true"
               v-if="
                 !$store.state.isSecureMode ||
                   $store.state.userInfo.enableLocalStore
@@ -354,14 +348,6 @@
               type="info"
               :effect="isNight ? 'dark' : 'light'"
               class="setting-btn"
-              @click="showFileManagerDialog('__HOME__', '用户数据管理')"
-            >
-              用户数据管理
-            </el-tag>
-            <el-tag
-              type="info"
-              :effect="isNight ? 'dark' : 'light'"
-              class="setting-btn"
               @click="loadUserList"
               v-if="$store.state.showManagerMode"
             >
@@ -375,15 +361,6 @@
               @click="showUserManageDialog()"
             >
               管理用户空间
-            </el-tag>
-            <el-tag
-              type="info"
-              :effect="isNight ? 'dark' : 'light'"
-              class="setting-btn"
-              v-if="$store.state.isManagerMode"
-              @click="showFileManagerDialog('__STORAGE__', '数据目录管理')"
-            >
-              数据目录管理
             </el-tag>
             <el-tag
               type="info"
@@ -410,7 +387,7 @@
               type="info"
               :effect="isNight ? 'dark' : 'light'"
               class="setting-btn"
-              @click="showFileManagerDialog('__WEBDAV__', 'WebDAV文件管理')"
+              @click="showWebDAVManageDialog = true"
             >
               文件管理
             </el-tag>
@@ -518,7 +495,7 @@
       class="shelf-wrapper"
       :class="isWebApp && !isNight ? 'status-bar-light-bg' : ''"
       ref="shelfWrapper"
-      @click="hideMenu"
+      @click="showNavigation = false"
     >
       <div class="shelf-title">
         <i
@@ -1011,12 +988,24 @@
         >
       </div>
     </el-dialog>
+
+    <LocalStore
+      v-model="showLocalStoreManageDialog"
+      @importFromLocalPathPreview="importMultiBooks"
+    ></LocalStore>
+
+    <WebDAV
+      v-model="showWebDAVManageDialog"
+      @importFromLocalPathPreview="importMultiBooks"
+    ></WebDAV>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import Explore from "../components/Explore.vue";
+import LocalStore from "../components/LocalStore.vue";
+import WebDAV from "../components/WebDAV.vue";
 import Axios from "../plugins/axios";
 import { errorTypeList } from "../plugins/config";
 import { setCache, getCache } from "../plugins/cache";
@@ -1028,7 +1017,9 @@ import Vue from "vue";
 
 export default {
   components: {
-    Explore
+    Explore,
+    LocalStore,
+    WebDAV
   },
   data() {
     return {
@@ -1117,9 +1108,7 @@ export default {
       addUserForm: {
         username: "",
         password: ""
-      },
-
-      isTauri: window.__TAURI__
+      }
     };
   },
   watch: {
@@ -1200,12 +1189,6 @@ export default {
         return;
       }
       this.editBook(book, isAdd, onSuccess);
-    });
-    eventBus.$on("importPreview", bookList => {
-      if (this._inactive) {
-        return;
-      }
-      this.importMultiBooks(bookList);
     });
   },
   activated() {
@@ -2034,11 +2017,6 @@ export default {
         }
       );
     },
-    hideMenu() {
-      if (this.$store.getters.isNormalPage && this.collapseMenu) {
-        this.showNavigation = false;
-      }
-    },
     toggleMenu() {
       if (this.collapseMenu) {
         this.showNavigation = !this.showNavigation;
@@ -2160,7 +2138,7 @@ export default {
     },
     async backupToWebdav() {
       const res = await this.$confirm(
-        `确认要用当前数据覆盖备份文件中的书源、书架、分组、RSS订阅数据、替换规则、书签、用户配置和Webdav书籍吗?`,
+        `确认要用当前书源和书架信息覆盖备份文件中的书源、书架、分组和RSS订阅数据吗?`,
         "提示",
         {
           confirmButtonText: "确定",
@@ -2368,7 +2346,6 @@ export default {
         this.$emit("importEnd");
       });
 
-      if (url.indexOf("assets") === -1) return;
       Axios.post(
         this.api + "/deleteFile",
         {
@@ -2456,9 +2433,6 @@ export default {
     showManageBookGroup() {
       this.loadBookGroup(true);
       eventBus.$emit("showBookGroupDialog", false);
-    },
-    showFileManagerDialog(home, title) {
-      eventBus.$emit("showFileManagerDialog", home, title);
     },
     getShowShelfBooks(bookGroup) {
       // 处理特殊分组

@@ -103,12 +103,6 @@
     />
 
     <Bookmark v-model="showBookmarkDialog" :book="bookmarkInBook" />
-
-    <FileManager
-      v-model="showFileManager"
-      :title="fileManagerTitle"
-      :home="fileManagerHome"
-    />
   </div>
 </template>
 
@@ -130,7 +124,6 @@ import RssArticle from "./components/RssArticle.vue";
 import SearchBookContent from "./components/SearchBookContent.vue";
 import Bookmark from "./components/Bookmark.vue";
 import BookmarkForm from "./components/BookmarkForm.vue";
-import FileManager from "./components/FileManager.vue";
 import { CodeJar } from "codejar";
 import Prism from "prismjs";
 import "prismjs/components/prism-json";
@@ -139,8 +132,7 @@ import "./assets/fonts/iconfont.css";
 import {
   cacheFirstRequest,
   isMiniInterface,
-  networkFirstRequest,
-  staleWhileRevalidateRequest
+  networkFirstRequest
 } from "./plugins/helper";
 
 Date.prototype.format = function(fmt) {
@@ -210,8 +202,7 @@ export default {
     RssArticle,
     SearchBookContent,
     Bookmark,
-    BookmarkForm,
-    FileManager
+    BookmarkForm
   },
   data() {
     return {
@@ -259,11 +250,7 @@ export default {
       showBookmarkForm: false,
       bookmark: {},
       isAddBookmark: true,
-      bookmarkInBook: {},
-
-      showFileManager: false,
-      fileManagerHome: "",
-      fileManagerTitle: "文件管理"
+      bookmarkInBook: {}
     };
   },
   beforeCreate() {
@@ -324,10 +311,7 @@ export default {
       //
     }
   },
-  async created() {
-    if (this.$route && this.$route.query && this.$route.query.api) {
-      this.$store.commit("setApi", this.$route.query.api);
-    }
+  created() {
     window
       .matchMedia("(prefers-color-scheme: dark)")
       .addEventListener("change", () => {
@@ -335,7 +319,6 @@ export default {
       });
     this.autoSetTheme(this.autoTheme);
 
-    await this.tauriInit().catch(() => {});
     this.getUserInfo().then(() => {
       this.$store.dispatch("syncFromLocalStorage");
       this.init();
@@ -396,11 +379,6 @@ export default {
     eventBus.$on("showBookmarkDialog", book => {
       this.showBookmarkDialog = true;
       this.bookmarkInBook = book;
-    });
-    eventBus.$on("showFileManagerDialog", (home, title) => {
-      this.fileManagerHome = home;
-      this.fileManagerTitle = title;
-      this.showFileManager = true;
     });
   },
   mounted() {
@@ -488,48 +466,6 @@ export default {
     }
   },
   methods: {
-    async tauriInit() {
-      // console.log("tauriInit");
-      if (window.__TAURI__ && window.__TAURI__.invoke) {
-        let is_server_running = await window.__TAURI__
-          .invoke("is_server_running")
-          .catch(() => false);
-        // console.log("is_server_running", is_server_running);
-        let setServerApi = async () => {
-          const serverPort = await window.__TAURI__
-            .invoke("get_server_port")
-            .catch(() => false);
-          // console.log("serverPort", serverPort);
-
-          if (serverPort) {
-            this.$store.commit(
-              "setApi",
-              `http://localhost:${serverPort}/reader3/`
-            );
-          }
-        };
-        if (!is_server_running) {
-          const loading = this.$loading({
-            lock: true,
-            text: "正在启动服务...",
-            spinner: "el-icon-loading",
-            background: "rgba(0, 0, 0, 0.7)"
-          });
-          await window.__TAURI__
-            .invoke("start_server")
-            .catch(err => {
-              this.$message.error(err);
-              this.$nextTick(() => {
-                this.$router.push("/setting");
-              });
-            })
-            .then(setServerApi);
-          loading.close();
-        } else {
-          await setServerApi();
-        }
-      }
-    },
     autoSetTheme(autoTheme) {
       if (autoTheme) {
         if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -657,22 +593,21 @@ export default {
         }
       );
     },
-    loadTxtTocRules(refresh) {
-      const onSuccess = res => {
-        if (res.data.isSuccess) {
-          this.$store.commit("setTxtTocRules", res.data.data || []);
-        }
-      };
-      return staleWhileRevalidateRequest(
+    loadTxtTocRules() {
+      return cacheFirstRequest(
         () => Axios.get("/getTxtTocRules"),
-        "txtTocRules",
-        refresh,
-        onSuccess
-      ).then(onSuccess, error => {
-        this.$message.error(
-          "加载txt章节规则失败 " + (error && error.toString())
-        );
-      });
+        "txtTocRules"
+      ).then(
+        res => {
+          const data = res.data.data || [];
+          this.$store.commit("setTxtTocRules", data);
+        },
+        error => {
+          this.$message.error(
+            "加载txt章节规则失败 " + (error && error.toString())
+          );
+        }
+      );
     },
     showEditorListener(title, content, callback) {
       this.editorTitle = title;
@@ -708,27 +643,25 @@ export default {
         });
     },
     loadBookGroup(refresh) {
-      const onSuccess = res => {
-        if (res.data.isSuccess) {
-          this.$store.commit("setBookGroupList", res.data.data || []);
-        }
-      };
-      return staleWhileRevalidateRequest(
+      return cacheFirstRequest(
         () => Axios.get(this.api + "/getBookGroups"),
         "bookGroup@" + this.currentUserName,
-        refresh,
-        onSuccess
-      ).then(onSuccess, error => {
-        this.$message.error("加载分组列表失败 " + (error && error.toString()));
-      });
+        refresh
+      ).then(
+        res => {
+          if (res.data.isSuccess) {
+            this.$store.commit("setBookGroupList", res.data.data || []);
+          }
+        },
+        error => {
+          this.$message.error(
+            "加载分组列表失败 " + (error && error.toString())
+          );
+        }
+      );
     },
     loadRssSources(refresh) {
-      const onSuccess = res => {
-        if (res.data.isSuccess) {
-          this.$store.commit("setRssSourceList", res.data.data || []);
-        }
-      };
-      return staleWhileRevalidateRequest(
+      return cacheFirstRequest(
         () =>
           Axios.get(this.api + "/getRssSources", {
             params: {
@@ -737,19 +670,20 @@ export default {
           }),
         "rssSources@" + this.currentUserName,
         refresh
-      ).then(onSuccess, error => {
-        this.$message.error(
-          "加载RSS订阅列表失败 " + (error && error.toString())
-        );
-      });
+      ).then(
+        res => {
+          const data = res.data.data || [];
+          this.$store.commit("setRssSourceList", data);
+        },
+        error => {
+          this.$message.error(
+            "加载RSS订阅列表失败 " + (error && error.toString())
+          );
+        }
+      );
     },
     loadBookSource(refresh) {
-      const onSuccess = res => {
-        if (res.data.isSuccess) {
-          this.$store.commit("setBookSourceList", res.data.data || []);
-        }
-      };
-      return staleWhileRevalidateRequest(
+      return cacheFirstRequest(
         () =>
           Axios.get(this.api + "/getBookSources", {
             params: {
@@ -757,41 +691,53 @@ export default {
             }
           }),
         "bookSourceList@" + this.currentUserName,
-        refresh,
-        onSuccess
-      ).then(onSuccess, error => {
-        this.$message.error("加载书源列表失败 " + (error && error.toString()));
-      });
+        refresh
+      ).then(
+        res => {
+          if (res.data.isSuccess) {
+            this.$store.commit("setBookSourceList", res.data.data || []);
+          }
+        },
+        error => {
+          this.$message.error(
+            "加载书源列表失败 " + (error && error.toString())
+          );
+        }
+      );
     },
     loadReplaceRules(refresh) {
-      const onSuccess = res => {
-        if (res.data.isSuccess) {
-          this.$store.commit("setFilterRules", res.data.data || []);
-        }
-      };
-      return staleWhileRevalidateRequest(
+      return cacheFirstRequest(
         () => Axios.get(this.api + "/getReplaceRules"),
         "replaceRule@" + this.currentUserName,
-        refresh,
-        onSuccess
-      ).then(onSuccess, error => {
-        this.$message.error("加载替换规则失败 " + (error && error.toString()));
-      });
+        refresh
+      ).then(
+        res => {
+          if (res.data.isSuccess) {
+            this.$store.commit("setFilterRules", res.data.data || []);
+          }
+        },
+        error => {
+          this.$message.error(
+            "加载替换规则失败 " + (error && error.toString())
+          );
+        }
+      );
     },
     loadBookmarks(refresh) {
-      const onSuccess = res => {
-        if (res.data.isSuccess) {
-          this.$store.commit("setBookmarks", res.data.data || []);
-        }
-      };
-      return staleWhileRevalidateRequest(
+      return cacheFirstRequest(
         () => Axios.get(this.api + "/getBookmarks"),
         "bookmark@" + this.currentUserName,
-        refresh,
-        onSuccess
-      ).then(onSuccess, error => {
-        this.$message.error("加载书签失败 " + (error && error.toString()));
-      });
+        refresh
+      ).then(
+        res => {
+          if (res.data.isSuccess) {
+            this.$store.commit("setBookmarks", res.data.data || []);
+          }
+        },
+        error => {
+          this.$message.error("加载书签失败 " + (error && error.toString()));
+        }
+      );
     },
     async isInShelf(book, addTip) {
       if (!book || !book.bookUrl || !book.origin) {
@@ -1070,9 +1016,6 @@ export default {
   .el-select .el-tag.el-tag--info {
     background-color: #777;
     border-color: #777;
-    color: #ddd;
-  }
-  .el-form-item__label {
     color: #ddd;
   }
   .el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover,

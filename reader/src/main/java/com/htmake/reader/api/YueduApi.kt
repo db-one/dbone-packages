@@ -22,7 +22,6 @@ import com.htmake.reader.api.controller.UserController
 import com.htmake.reader.api.controller.WebdavController
 import com.htmake.reader.api.controller.ReplaceRuleController
 import com.htmake.reader.api.controller.BookmarkController
-import com.htmake.reader.api.controller.FileController
 import com.htmake.reader.utils.error
 import com.htmake.reader.utils.success
 import com.htmake.reader.utils.getStorage
@@ -42,7 +41,6 @@ import com.htmake.reader.utils.unzip
 import com.htmake.reader.utils.zip
 import com.htmake.reader.utils.jsonEncode
 import com.htmake.reader.utils.getRelativePath
-import com.htmake.reader.utils.MongoManager
 import com.htmake.reader.verticle.RestVerticle
 import com.htmake.reader.SpringEvent
 import org.springframework.stereotype.Component
@@ -88,11 +86,6 @@ class YueduApi : RestVerticle() {
     override suspend fun initRouter(router: Router) {
         setupPort()
 
-        // 连接 mongodDb
-        if (appConfig.mongoUri.isNotEmpty()) {
-            MongoManager.connect(appConfig.mongoUri)
-        }
-
         // 旧版数据迁移
         migration()
 
@@ -112,23 +105,8 @@ class YueduApi : RestVerticle() {
         }
         router.route("/assets/*").handler(StaticHandler.create().setAllowRootFileSystemAccess(true).setWebRoot(assetsDir).setDefaultContentEncoding("UTF-8"));
 
-        // 书籍资源
+        // epub资源
         var dataDir = getWorkDir("storage", "data");
-        router.route("/book-assets/*").handler {
-            var path = it.request().path().replace("/book-assets/", "/", true)
-            path = URLDecoder.decode(path, "UTF-8")
-            if (path.endsWith("html", true)) {
-                var filePath = File(dataDir + path)
-                if (filePath.exists()) {
-                    // 处理 js 注入脚本
-                    BookConfig.injectJavascriptToEpubChapter(filePath.toString())
-                }
-            }
-            it.next()
-        }
-        router.route("/book-assets/*").handler(StaticHandler.create().setAllowRootFileSystemAccess(true).setWebRoot(dataDir).setDefaultContentEncoding("UTF-8"));
-
-        // 兼容之前的 epub 缓存
         router.route("/epub/*").handler {
             var path = it.request().path().replace("/epub/", "/", true)
             path = URLDecoder.decode(path, "UTF-8")
@@ -157,7 +135,6 @@ class YueduApi : RestVerticle() {
         }
         val replaceRuleController = ReplaceRuleController(coroutineContext)
         val bookmarkController = BookmarkController(coroutineContext)
-        val fileController = FileController(coroutineContext)
 
         /** 书源模块 */
         router.post("/reader3/saveBookSource").coroutineHandler { bookSourceController.saveBookSource(it) }
@@ -253,6 +230,19 @@ class YueduApi : RestVerticle() {
         router.post("/reader3/deleteBookGroup").coroutineHandler { bookController.deleteBookGroup(it) }
         router.post("/reader3/saveBookGroupOrder").coroutineHandler { bookController.saveBookGroupOrder(it) }
 
+        // 书仓功能
+        // 获取书仓文件列表
+        router.get("/reader3/getLocalStoreFileList").coroutineHandler { bookController.getLocalStoreFileList(it) }
+        // 下载书仓文件
+        router.get("/reader3/getLocalStoreFile").coroutineHandlerWithoutRes { bookController.getLocalStoreFile(it) }
+        // 删除书仓文件
+        router.post("/reader3/deleteLocalStoreFile").coroutineHandler { bookController.deleteLocalStoreFile(it) }
+        router.post("/reader3/deleteLocalStoreFileList").coroutineHandler { bookController.deleteLocalStoreFileList(it) }
+        // 从本地书仓/webdav导入
+        router.post("/reader3/importFromLocalPathPreview").coroutineHandler { bookController.importFromLocalPathPreview(it) }
+        // 上传文件到书仓
+        router.post("/reader3/uploadFileToLocalStore").coroutineHandler { bookController.uploadFileToLocalStore(it) }
+
         // 调试书源
         router.get("/reader3/bookSourceDebugSSE").coroutineHandlerWithoutRes { bookController.bookSourceDebugSSE(it) }
 
@@ -270,11 +260,6 @@ class YueduApi : RestVerticle() {
         // 全文搜索
         router.get("/reader3/searchBookContent").coroutineHandler { bookController.searchBookContent(it) }
         router.post("/reader3/searchBookContent").coroutineHandler { bookController.searchBookContent(it) }
-
-        // mongodb 备份
-        router.post("/reader3/backupToMongodb").coroutineHandler { bookController.backupToMongodb(it) }
-        router.post("/reader3/restoreFromMongodb").coroutineHandler { bookController.restoreFromMongodb(it) }
-
 
         /** 用户模块 */
         // 上传文件
@@ -314,6 +299,23 @@ class YueduApi : RestVerticle() {
 
 
         /** webdav模块 */
+        // 获取webdav备份列表
+        router.get("/reader3/getWebdavFileList").coroutineHandler { webdavController.getWebdavFileList(it) }
+
+        // 下载webdav文件
+        router.get("/reader3/getWebdavFile").coroutineHandlerWithoutRes { webdavController.getWebdavFile(it) }
+
+        // 上传webdav文件
+        router.post("/reader3/uploadFileToWebdav").coroutineHandler { webdavController.uploadFileToWebdav(it) }
+
+        // 删除webdav文件
+        router.get("/reader3/deleteWebdavFile").coroutineHandler { webdavController.deleteWebdavFile(it) }
+        router.post("/reader3/deleteWebdavFile").coroutineHandler { webdavController.deleteWebdavFile(it) }
+        router.post("/reader3/deleteWebdavFileList").coroutineHandler { webdavController.deleteWebdavFileList(it) }
+
+        // 从webdav备份恢复
+        router.post("/reader3/restoreFromWebdav").coroutineHandler { webdavController.restoreFromWebdav(it) }
+
         // 备份到webdav
         router.post("/reader3/backupToWebdav").coroutineHandler { webdavController.backupToWebdav(it) }
 
@@ -344,35 +346,6 @@ class YueduApi : RestVerticle() {
         router.post("/reader3/saveBookmarks").coroutineHandler { bookmarkController.saveBookmarks(it) }
         router.post("/reader3/deleteBookmark").coroutineHandler { bookmarkController.deleteBookmark(it) }
         router.post("/reader3/deleteBookmarks").coroutineHandler { bookmarkController.deleteBookmarks(it) }
-
-        /** 文件系统模块 */
-        // 获取文件列表
-        router.get("/reader3/file/list").coroutineHandler { fileController.list(it) }
-
-        // 读取文件内容
-        router.get("/reader3/file/get").coroutineHandler { fileController.get(it) }
-
-        // 保存文件内容
-        router.post("/reader3/file/save").coroutineHandler { fileController.save(it) }
-
-        // 创建文件夹
-        router.post("/reader3/file/mkdir").coroutineHandler { fileController.mkdir(it) }
-
-        // 下载文件
-        router.get("/reader3/file/download").coroutineHandlerWithoutRes { fileController.download(it) }
-
-        // 上传文件
-        router.post("/reader3/file/upload").coroutineHandler { fileController.upload(it) }
-
-        // 删除文件
-        router.post("/reader3/file/delete").coroutineHandler { fileController.delete(it) }
-        router.post("/reader3/file/deleteMulti").coroutineHandler { fileController.deleteMulti(it) }
-
-        // 从文件导入
-        router.post("/reader3/file/importPreview").coroutineHandler { fileController.importPreview(it) }
-
-        // 从文件恢复
-        router.post("/reader3/file/restore").coroutineHandler { fileController.restore(it) }
     }
 
     suspend fun setupPort() {

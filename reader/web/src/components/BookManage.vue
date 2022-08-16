@@ -82,10 +82,7 @@
               @click="setBookGroup(scope.row)"
               >分组</el-button
             >
-            <el-dropdown
-              :trigger="$store.state.touchable ? 'click' : 'hover'"
-              @command="cacheBook(scope.row, $event)"
-            >
+            <el-dropdown @command="cacheBook(scope.row, $event)">
               <el-button class="text-button" type="text" size="medium">
                 <span v-if="isCaching(scope.row)">
                   <i class="el-icon-loading"></i> 缓存中
@@ -113,10 +110,7 @@
                 >
               </el-dropdown-menu>
             </el-dropdown>
-            <el-dropdown
-              :trigger="$store.state.touchable ? 'click' : 'hover'"
-              @command="exportBook(scope.row, $event)"
-            >
+            <el-dropdown @command="exportBook(scope.row, $event)">
               <el-button class="text-button" type="text" size="medium">
                 导出<i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
@@ -137,11 +131,7 @@
         @click="deleteBookList"
         >批量删除</el-button
       >
-      <el-dropdown
-        :trigger="$store.state.touchable ? 'click' : 'hover'"
-        class="float-left"
-        @command="addBookGroupMulti"
-      >
+      <el-dropdown class="float-left" @command="addBookGroupMulti">
         <el-button type="primary" size="medium">
           批量添加分组<i class="el-icon-arrow-down el-icon--right"></i>
         </el-button>
@@ -154,11 +144,7 @@
           >
         </el-dropdown-menu>
       </el-dropdown>
-      <el-dropdown
-        :trigger="$store.state.touchable ? 'click' : 'hover'"
-        class="float-left"
-        @command="removeBookGroupMulti"
-      >
+      <el-dropdown class="float-left" @command="removeBookGroupMulti">
         <el-button type="primary" size="medium">
           批量移除分组<i class="el-icon-arrow-down el-icon--right"></i>
         </el-button>
