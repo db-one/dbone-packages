@@ -1,15 +1,15 @@
 # Copyright (C) 2016 Openwrt.org
 #
 # This is free software, licensed under the Apache License, Version 2.0 .
-# Maintained by eSir Playground <https://github.com/esirplayground/luci-app-poweroff>
+#
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-poweroff
-PKG_VERSION:=20200726
-PKG_RELEASE:=1
-LUCI_TITLE:=LuCI Support of PowerOff Router
+LUCI_TITLE:=LuCI support for Timewol From Koolshare
+LUCI_DEPENDS:=+etherwake
 LUCI_PKGARCH:=all
+PKG_VERSION:=1.0
+PKG_RELEASE:=3-20220406
 
 include $(TOPDIR)/feeds/luci/luci.mk
 

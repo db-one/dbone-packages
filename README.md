@@ -43,7 +43,6 @@
 ###### luci-app-pushbot    #基于原版微信推送修改，支持更多协议
 ###### luci-app-smartdns   #smartdns DNS加速
 ###### luci-app-poweroff    #关机（增加关机功能）
-###### luci-app-poweroffdevice    #关机（同上，增加关机功能）
 ###### luci-app-shutdown    #关机重启（增加关机重启功能）
 ###### luci-app-wizard    #设置向导
 ###### luci-app-oaf （OpenAppFilter）  #应用过滤 ，该模块只工作在路由模式， 旁路模式、桥模式不生效，还有和Turbo ACC 网络加速有冲突
