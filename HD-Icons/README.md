@@ -1,4 +1,4 @@
-# 高清图标（当前共计 254 个）
+# 高清图标（当前共计 256 个）
 
 - 初衷是为了用于`Unraid Docker`容器使用，当然，任何需要的地方也都可以用。
 - 分辨率为 `1024x1024`。
@@ -60,11 +60,12 @@
 |SpeedTest|2|Linux|0|Windows 10|0|Windows 11|0|
 |Windows 7|0|Windows XP|0|MacOS|0|Ubuntu|0|
 |CentOS|0|Deepin|0|Arch|0|Opensuse|0|
-|Debian|0|Android|0|Mint|0|Redhat|0|
+|Debian|2|Android|0|Mint|0|Redhat|0|
 |网心云|2|FRP|1|Synology|2|DSVideo|1|
 |Synology Moments|1|Synology Photos|1|Synology Drive|1|Casaos|1|
 
 # 最近更新
+![Debian](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Debian_A.png)
 ![Casaos](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Casaos_A.png)
 ![Synology](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Synology_A.png)
 ![Synology Moments](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Synomoments_A.png)
@@ -94,7 +95,6 @@
 ![TailScale](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Tailscale.png)
 ![Adguard](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Adguard_B.png)
 ![Minio](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Minio_B.png)
-![Qinglong](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Qinglong_B.png)
 ![Jellyseerr](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Jellyseerr.png)
 ![Openwrt](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Openwrt_B.png)
 ![Overseerr](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Overseerr.png)
