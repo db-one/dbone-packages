@@ -1,4 +1,4 @@
-# 高清图标（当前共计 260 个）
+# 高清图标（当前共计 272 个）
 
 - 初衷是为了用于`Unraid Docker`容器使用，当然，任何需要的地方也都可以用。
 - 分辨率为 `1024x1024`。
@@ -58,14 +58,21 @@
 |Tasmota|2|HomeAssistant|3|Joplin|2|OnlyOffice|2|
 |PhotoView|2|Unbalance|1|ProxmoxVE|5|RssHub|1|
 |SpeedTest|2|Linux|0|Windows 10|0|Windows 11|0|
-|Windows 7|0|Windows XP|0|MacOS|0|Ubuntu|0|
-|CentOS|0|Deepin|0|Arch|0|Opensuse|0|
+|Windows 7|0|Windows XP|0|MacOS|0|Ubuntu|4|
+|CentOS|2|Deepin|0|Arch|2|Opensuse|0|
 |Debian|2|Android|0|Mint|0|Redhat|0|
 |网心云|2|FRP|1|Synology|2|DSVideo|1|
 |Synology Moments|1|Synology Photos|1|Synology Drive|1|Casaos|1|
-|Freenom|2|Immich|1|Iobroker|1|-|-|
+|Freenom|2|Immich|1|Iobroker|1|Prometheus|2|
+|Mosquitto|2|-|-|-|-|-|-|
 
 # 最近更新
+![Mosquitto](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Mosquitto_B.png)
+![Prometheus](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Prometheus_A.png)
+![Arch](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Arch_A.png)
+![Ubuntu](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Ubuntu_A.png)
+![Ubuntu](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Ubuntu_B.png)
+![Centos](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Centos_A.png)
 ![Freenom](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Freenom_A.png)
 ![Iobroker](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Iobroker_A.png)
 ![Immich](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Immich_A.png)
@@ -81,21 +88,22 @@
 ![易有云](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Linkease_A.png)
 ![Qinglong](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Qinglong_B.png)
 ![PVE](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/PVE_C.png)
-![RssHub](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Rsshub.png)
+![RssHub](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Rsshub_A.png)
 ![Cloudflare](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Cloudflare_B.png)
-![Neko](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Neko.png)
+![Neko](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Neko_A.png)
 ![ZigbeeMQTT](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/ZigbeeMQTT.png)
-![Siyuan](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Siyuan.png)
+![Siyuan](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Siyuan_A.png)
 ![HomeAssistant](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/HA_B.png)
+![NodeRed_B](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/NodeRed_A.png)
 ![NodeRed_B](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/NodeRed_B.png)
-![MT-Photos](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/MT-Photos.png)
+![MT-Photos](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Mtphotos_A.png)
 ![HomeAssistant](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/HA_A.png)
 ![HomeAssistant](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/HA_C.png)
-![Jackett](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Jackett.png)
+![Jackett](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Jackett_A.png)
 ![Flood](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Flood_A.png)
 ![Ombi](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Ombi_A.png)
-![迅雷](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Xunlei.png)
-![DDNS](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/DDNS.png)
+![迅雷](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Xunlei_A.png)
+![DDNS](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/DDNS_A.png)
 ![TailScale](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Tailscale.png)
 ![Adguard](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Adguard_B.png)
 ![Minio](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Minio_B.png)
