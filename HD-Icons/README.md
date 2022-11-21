@@ -1,9 +1,9 @@
-# 高清图标（当前共计 276 个）
+# 高清图标（当前共计 280 个）
 
 - 初衷是为了用于`Unraid Docker`容器使用，当然，任何需要的地方也都可以用。
 - 分辨率为 `1024x1024`。
 - `circle` 文件夹包含圆形图标，`border-radius` 文件夹包含圆角矩形图标。
-- **有需要的图标可以发`Issues`，如果有能力做的就会添加。**
+- **有需要的图标可以加微信或者 QQ 群或者发`Issues`，如果有能力做的就会添加。**
 - 所有图标都已经过**无损压缩**处理。
 
 ## **B站：煦诗儿 [传送门](https://space.bilibili.com/32313260)**
@@ -59,14 +59,17 @@
 |PhotoView|2|Unbalance|1|ProxmoxVE|5|RssHub|1|
 |SpeedTest|2|Linux|0|Windows 10|0|Windows 11|0|
 |Windows 7|0|Windows XP|0|MacOS|0|Ubuntu|4|
-|CentOS|2|Deepin|0|Arch|2|Opensuse|0|
-|Debian|2|Android|0|Mint|0|Redhat|0|
+|CentOS|2|Deepin|1|Arch|2|Opensuse|0|
+|Debian|2|Android|0|Mint|0|Redhat|1|
 |网心云|2|FRP|1|Synology|2|DSVideo|1|
 |Synology Moments|1|Synology Photos|1|Synology Drive|1|Casaos|1|
 |Freenom|2|Immich|1|Iobroker|1|Prometheus|2|
-|Mosquitto|2|Apache|4|-|-|-|-|
+|Mosquitto|2|Apache|4|Netdata|2|-|-|
 
 # 最近更新
+![Redhat](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Redhat_A.png)
+![Netdata](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Netdata_B.png)
+![Deepin](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Deepin_A.png)
 ![Apache](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Apache_A.png)
 ![Apache](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Apache_D.png)
 ![Mosquitto](https://ghproxy.com/https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/Mosquitto_B.png)
