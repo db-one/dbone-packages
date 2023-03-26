@@ -47,7 +47,6 @@
 ###### luci-app-oaf （OpenAppFilter）    #应用过滤 ，该模块只工作在路由模式， 旁路模式、桥模式不生效，还有和Turbo ACC 网络加速有冲突
 ###### luci-app-smartinfo    #磁盘监控 ，该工具帮助您通过S.M.A.R.T技术来监控您硬盘的健康状况
 ###### luci-app-autotimeset    #定时设置，替代luci-app-autoreboot
-###### luci-app-jd-dailybonus    #京东签到
 ###### luci-app-turboacc    #Turbo ACC 网络加速
 #
 ###  依赖
