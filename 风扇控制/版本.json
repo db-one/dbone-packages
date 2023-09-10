@@ -1,9 +1,9 @@
 {
-    "Number":  168,
-    "Message":  "- Move view options to home page\r\n- Move sensor settings to settings page\r\n- Settings page overhaul\r\n- Update LibreHardwareMonitorLib",
+    "Number":  170,
+    "Message":  "- Simplify the manual pairing process for controls/speeds with a new dialog\r\n- UI tweaks\r\n- Serialization changes (will prompt for save)",
     "Checksums":  {
-                      "FanControl_4_8":  "D194F0CA10AC46697DCBB0C490AAA5DF",
-                      "FanControl_7_0":  "0F031987F9279418A61B9686A11862EF",
+                      "FanControl_4_8":  "4130B3E1AE25E803C89543FCC5511D0C",
+                      "FanControl_7_0":  "2716ECDC696CA090BD504590E46899CE",
                       "Updater":  "508DCD773CF19684359FAD757EBF480F"
                   }
 }
