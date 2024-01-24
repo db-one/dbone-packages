@@ -94,14 +94,12 @@ function system_check() {
   echo
   echo
   ECHOG "请选择订阅转换格式服务程序"
-  echo
   ECHOY " 1. tindy2013/subconverter(原版订阅转换格式服务程序)"
-  echo
   ECHOY " 2. MetaCubeX/subconverter(原版基础上改版订阅转换格式服务程序)"
   echo
   XUANZHEOR=" 请输入数字选择"
   while :; do
-  read -p " ${XUANZHEOR}： " CHOOSEDNS
+  read -p " ${XUANZHEOR}： " SUB_CONVER
   case $SUB_CONVER in
     1)
       export subconv_erter="tindy2013"
@@ -166,13 +164,13 @@ function system_check() {
 }
 
 function nodejs_install() {
-    apt update
-    ${INS} curl wget sudo git lsof tar systemd lsb-release gnupg2
+    ${INS} curl wget sudo git lsof tar systemd lsb-release ca-certificates gnupg gnupg2
     ${UNINS} --purge npm
     ${UNINS} --purge nodejs
     ${UNINS} --purge nodejs-legacy
     apt autoremove -y
-    curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_16.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
     ${UNINS} cmdtest
     ${UNINS} yarn
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
@@ -180,7 +178,7 @@ function nodejs_install() {
     rm -f /etc/apt/sources.list.d/nginx.list
     echo "deb http://nginx.org/packages/${PUBKEY} $(lsb_release -cs) nginx" >/etc/apt/sources.list.d/nginx.list
     curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add -
-    apt-get update
+    sudo apt-get update
     ${INS} nodejs yarn
 }
 
@@ -284,13 +282,13 @@ function install_subconverter() {
   fi
   
   if [[ "${subconv_erter}" == "MetaCubeX" ]]; then
-    rm -rf "${clash_path}/subconverter_${ARCH_PRINT}.tar.gz" >/dev/null 2>&1
-    wget -P "${clash_path}" https://github.com/MetaCubeX/subconverter/releases/download/Alpha/subconverter_${ARCH_PRINT}.tar.gz -O "${clash_path}/subconverter_${ARCH_PRINT}.tar.gz"
+    rm -rf subconverter_${ARCH_PRINT}.tar.gz >/dev/null 2>&1
+    wget https://mirror.ghproxy.com/https://github.com/MetaCubeX/subconverter/releases/download/Alpha/subconverter_${ARCH_PRINT}.tar.gz
   else
     latest_vers="$(wget -qO- -t1 -T2 "https://github.com/281677160/common/releases/download/API/tindy2013.api" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')"
     [[ -z ${latest_vers} ]] && latest_vers="v0.8.1"
-    rm -rf "${clash_path}/subconverter_${ARCH_PRINT}.tar.gz" >/dev/null 2>&1
-    wget -P "${clash_path}" https://github.com/tindy2013/subconverter/releases/download/${latest_vers}/subconverter_${ARCH_PRINT}.tar.gz -O "${clash_path}/subconverter_${ARCH_PRINT}.tar.gz"
+    rm -rf subconverter_${ARCH_PRINT}.tar.gz >/dev/null 2>&1
+    wget https://mirror.ghproxy.com/https://github.com/tindy2013/subconverter/releases/download/${latest_vers}/subconverter_${ARCH_PRINT}.tar.gz
   fi
   
   if [[ $? -ne 0 ]];then
@@ -352,16 +350,16 @@ function update_rc() {
 
 function install_subweb() {
   ECHOY "正在安装sub-web服务"
-  rm -fr sub-web && git clone https://ghproxy.com/https://github.com/CareyWang/sub-web.git sub-web
+  rm -fr sub-web && git clone https://mirror.ghproxy.com/https://github.com/CareyWang/sub-web.git sub-web
   if [[ $? -ne 0 ]];then
     echo -e "\033[31m sub-web下载失败,请再次执行安装命令试试! \033[0m"
     exit 1
   else
-    rm -fr "subweb" && git clone https://ghproxy.com/https://github.com/281677160/agent "subweb"
+    rm -fr "subweb" && git clone https://mirror.ghproxy.com/https://github.com/281677160/agent "subweb"
     judge "sub-web补丁下载"
     cp -R subweb/subweb/* "sub-web/"
     mv -f "subweb/subweb/.env" "sub-web/.env"
-    wget -q https://ghproxy.com/https://raw.githubusercontent.com/281677160/agent/main/Subconverter.vue -O /root/sub-web/src/views/Subconverter.vue
+    wget -q https://mirror.ghproxy.com/https://raw.githubusercontent.com/281677160/agent/main/subweb/src/views/Subconverter.vue -O /root/sub-web/src/views/Subconverter.vue
     if [[ $? -ne 0 ]]; then
       curl -fsSL https://cdn.jsdelivr.net/gh/281677160/agent@main/Subconverter.vue > "/root/sub-web/src/views/Subconverter.vue"
     fi
