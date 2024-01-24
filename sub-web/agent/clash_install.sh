@@ -91,6 +91,34 @@ function system_check() {
   esac
   done
 
+  echo
+  echo
+  ECHOG "请选择订阅转换格式服务程序"
+  echo
+  ECHOY " 1. tindy2013/subconverter(原版订阅转换格式服务程序)"
+  echo
+  ECHOY " 2. MetaCubeX/subconverter(原版基础上改版订阅转换格式服务程序)"
+  echo
+  XUANZHEOR=" 请输入数字选择"
+  while :; do
+  read -p " ${XUANZHEOR}： " CHOOSEDNS
+  case $SUB_CONVER in
+    1)
+      export subconv_erter="tindy2013"
+      export SUB_service="原版订阅转换服务程序"
+    break
+    ;;
+    2)
+      export subconv_erter="MetaCubeX"
+      export SUB_service="原版基础上的改版订阅转换服务程序"
+    break
+    ;;
+    *)
+      XUANZHEOR=" 请输入正确的数字编号!"
+    ;;
+    esac
+    done
+
   ECHOY "正在安装各种必须依赖"
   echo
   if [[ "$(. /etc/os-release && echo "$ID")" == "centos" ]]; then
@@ -254,8 +282,17 @@ function install_subconverter() {
       fi
     fi  
   fi
-  rm -rf "/root/subconverter_${ARCH_PRINT}.tar.gz" >/dev/null 2>&1
-  wget https://ghproxy.com/https://github.com/MetaCubeX/subconverter/releases/download/Alpha/subconverter_${ARCH_PRINT}.tar.gz
+  
+  if [[ "${subconv_erter}" == "MetaCubeX" ]]; then
+    rm -rf "${clash_path}/subconverter_${ARCH_PRINT}.tar.gz" >/dev/null 2>&1
+    wget -P "${clash_path}" https://github.com/MetaCubeX/subconverter/releases/download/Alpha/subconverter_${ARCH_PRINT}.tar.gz -O "${clash_path}/subconverter_${ARCH_PRINT}.tar.gz"
+  else
+    latest_vers="$(wget -qO- -t1 -T2 "https://github.com/281677160/common/releases/download/API/tindy2013.api" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')"
+    [[ -z ${latest_vers} ]] && latest_vers="v0.8.1"
+    rm -rf "${clash_path}/subconverter_${ARCH_PRINT}.tar.gz" >/dev/null 2>&1
+    wget -P "${clash_path}" https://github.com/tindy2013/subconverter/releases/download/${latest_vers}/subconverter_${ARCH_PRINT}.tar.gz -O "${clash_path}/subconverter_${ARCH_PRINT}.tar.gz"
+  fi
+  
   if [[ $? -ne 0 ]];then
     echo -e "\033[31m subconverter下载失败! \033[0m"
     exit 1
