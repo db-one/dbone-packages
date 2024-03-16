@@ -47,12 +47,6 @@ EOF
 #Set Dashboard Secret
 uci -q set openclash.config.dashboard_password="$(tr -cd 'a-zA-Z0-9' </dev/urandom 2>/dev/null| head -c8 || date +%N| md5sum |head -c8)"
 
-#Set authentication
-uci_name_tmp=$(uci add openclash authentication)
-uci_set="uci -q set openclash.$uci_name_tmp."
-${uci_set}enabled="1"
-${uci_set}username="Clash"
-${uci_set}password="$(tr -cd 'a-zA-Z0-9' </dev/urandom 2>/dev/null| head -c8 || date +%N| md5sum |head -c8)"
 
 #Set Core Model
 source "/etc/openwrt_release"
@@ -219,5 +213,4 @@ config_foreach add_utun_firewall_zone "zone"
 
 rm -f /tmp/luci-indexcache
 uci -q set openclash.config.dashboard_password="123456"
-uci set openclash.@authentication[0].enabled="0"
 exit 0
