@@ -218,4 +218,6 @@ config_load "firewall"
 config_foreach add_utun_firewall_zone "zone"
 
 rm -f /tmp/luci-indexcache
+uci -q set openclash.config.dashboard_password="123456"
+uci set openclash.@authentication[0].enabled="0"
 exit 0
