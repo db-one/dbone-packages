@@ -23,6 +23,8 @@
 ###### luci-theme-infinityfreedom    #透明主题
 ###### luci-theme-rosy    #主题-rosy
 ###### luci-theme-neobird    #主题-小清新 Neobird
+###### luci-theme-design    #主题-design 基于Neobird修改
+###### luci-app-design-config    #design 主题设置
 #
 ###  插件
 ###### luci-app-adguardhome    #adguardhome
