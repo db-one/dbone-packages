@@ -325,7 +325,7 @@ msgstr "从以上列表中随机访问地址<br />文本框请使用「保存」
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:315
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:366
-msgid "Typically, it should be pppoe-wan or WAN interface. For multi-wan environments, please choose accordingly."
+msgid "Generally, it should be the pppoe-wan or WAN interface. For multi-dial environments, please select the appropriate interface yourself."
 msgstr "一般应为 pppoe-wan 或 WAN 接口。多拨环境请自行选择。"
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:321
@@ -823,6 +823,14 @@ msgstr "最大并发进程数"
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:56
 msgid "Do not change the setting value for low-performance devices, or reduce the parameters as appropriate."
 msgstr "低性能设备请勿更改设置值，或酌情减少参数"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:120
+msgid "Client list sorting method"
+msgstr "客户端列表排序方式"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:52
+msgid "This will change the sorting method for both the online device list page and the sorting order in the push content."
+msgstr "这将会同时改变在线设备列表页面和推送内容中的排序方式"
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:58
 msgid "Custom temperature reading command"
