@@ -39,6 +39,7 @@
 ###### luci-app-control-webrestriction    #访问限制
 ###### luci-app-socat    #端口转发
 ###### luci-app-ddnsto    #小宝开发的DDNS.to内网穿透
+###### luci-app-v2ray-server   #V2ray服务端
 ###### luci-app-ikoolproxy   #ikoolproxy是基于koolproxyR Plus+重新整理而来
 ###### luci-app-serverchan    #微信推送
 ###### luci-app-pushbot    #基于原版微信推送修改，支持更多协议
