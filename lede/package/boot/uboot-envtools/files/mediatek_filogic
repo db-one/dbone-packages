@@ -13,7 +13,6 @@ board=$(board_name)
 
 case "$board" in
 bananapi,bpi-r3|\
-bananapi,bpi-r3-mini|\
 bananapi,bpi-r4|\
 bananapi,bpi-r4-poe)
 	case "$(cmdline_get_var root)" in
@@ -41,9 +40,6 @@ cetron,ct3003|\
 imou,lc-hx3001)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x20000" "0x20000"
 	;;
-konka,komi-a31)
-	ubootenv_add_uci_config "/dev/mtd2" "0x0" "0x20000" "0x80000" "1"
-	;;
 glinet,gl-mt2500|\
 glinet,gl-mt6000)
 	local envdev=$(find_mmc_part "u-boot-env")
@@ -61,9 +57,6 @@ xiaomi,mi-router-ax3000t|\
 xiaomi,redmi-router-ax6000)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x10000" "0x20000"
 	ubootenv_add_uci_sys_config "/dev/mtd2" "0x0" "0x10000" "0x20000"
-	;;
-zyxel,ex5700-telenor)
-	ubootenv_add_uci_config "/dev/ubootenv" "0x0" "0x4000" "0x4000" "1"
 	;;
 esac
 
