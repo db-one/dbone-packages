@@ -14,6 +14,9 @@
 ###### luci-app-vlmcsd          #KMS激活服务器
 ###### luci-app-filetransfer   #文件传输
 #
+###  依赖
+myautocore    #加强版的预览信息autocore，可显示温度，网卡MAC，时间等详细信息，需删除原版autocore
+
 ### 2333
 ###### helloworld
 ###### luci-app-passwall
@@ -55,8 +58,6 @@
 ###### luci-app-autotimeset    #定时设置，替代luci-app-autoreboot
 ###### luci-app-turboacc    #Turbo ACC 网络加速
 #
-###  依赖
-myautocore    #加强版的预览信息autocore，可显示温度，网卡MAC，时间等详细信息，需删除原版autocore
 
 
 #
