@@ -14,6 +14,8 @@
 ###### luci-app-vlmcsd          #KMS激活服务器
 ###### luci-app-filetransfer   #文件传输
 #
+###### OpenWrt-mihomo   #mihomo插件
+#
 ### 2333
 ###### helloworld
 ###### luci-app-passwall
