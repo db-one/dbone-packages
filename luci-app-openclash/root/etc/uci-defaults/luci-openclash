@@ -48,6 +48,14 @@ if [ -z "$(uci -q get openclash.config.dashboard_password)" ]; then
 	uci -q set openclash.config.dashboard_password="$(tr -cd 'a-zA-Z0-9' </dev/urandom 2>/dev/null| head -c8 || date +%N| md5sum |head -c8)"
 fi
 
+#Set Authentication
+if [ -z "$(uci -q get openclash.@authentication[0])" ]; then
+	uci_name_tmp=$(uci -q add openclash authentication)
+	uci_set="uci -q set openclash.$uci_name_tmp."
+	${uci_set}enabled="1"
+	${uci_set}username="Clash"
+	${uci_set}password="$(tr -cd 'a-zA-Z0-9' </dev/urandom 2>/dev/null| head -c8 || date +%N| md5sum |head -c8)"
+fi
 
 #Set Core Model
 source "/etc/openwrt_release"
@@ -125,6 +133,8 @@ if [ -f "/tmp/openclash.bak" ]; then
 	rm -rf "/etc/openclash/custom/openclash_sniffing_domain_filter.yaml" >/dev/null 2>&1
 fi
 
+uci -q set openclash.config.enable=0
+uci -q commit openclash
 
 if [ -f "/usr/lib/lua/luci/model/network.lua" ]; then
    sed -i '/OpenClash Append/,/OpenClash Append End/d' "/usr/lib/lua/luci/model/network.lua" >/dev/null 2>&1
@@ -191,5 +201,4 @@ sed -i '/.*kB maximum content size*/c\export let HTTP_MAX_CONTENT = 1024*10240;	
 /etc/init.d/uhttpd restart >/dev/null 2>&1
 
 rm -f /tmp/luci-indexcache* >/dev/null 2>&1
-uci -q set openclash.config.dashboard_password=""
 exit 0
