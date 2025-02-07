@@ -1,11 +1,11 @@
 {
-    "Number":  212,
-    "Message":  "- Fix AMD gpu (ADLX) zero rpm state\r\n- Update LibreHardwareMonitorLib (NCT6701D support)\r\n- Hebrew lang. support",
+    "Number":  214,
+    "Message":  "- Update LibreHardwareMonitorLib\r\n- Install Plugin dialog now works with .dll or .zip \r\n- Welcome dialog now allow to change language immediately",
     "Checksums":  {
-                      "FanControl_4_8":  "4B10DB887813C42EEA028F522F9D2E3C",
-                      "FanControl_8_0":  "D8D21C81383C9DE35F2F0FA7CBD638DA",
-                      "FanControl_4_8_Installer":  "EA4B41934317B65C78F9CE6F560A879B",
-                      "FanControl_8_0_Installer":  "4C26CE4E5CA1E3C2CF997EB4913BFBC2",
+                      "FanControl_4_8":  "DC783BDEF199D2DAF3D459E95ED47649",
+                      "FanControl_8_0":  "8BA06D998A193CD951B8C13D41AFDFA0",
+                      "FanControl_4_8_Installer":  "2A8DB74C5A1776A592F32A2CA720C961",
+                      "FanControl_8_0_Installer":  "129F4979CB1FA7A27C31A52DCC9A4D7F",
                       "Updater":  "8BC3FB11C955E99E2EC5863884140484"
                   }
 }
