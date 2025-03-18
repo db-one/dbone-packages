@@ -3,7 +3,10 @@ From: Andrey Safonov <andrey.safonov@gmail.com>
 Date: Sat, 16 Dec 2023 22:46:35 +0300
 Subject: rk3399 PCIE PHY reset on probe
 
-This patches the PCIE initialization error after warm reboot. The root of cause is, when the device is booted after power on, PHY stays in 'factory' state. After warm boot PHY stays in the previous state and prevents any training, thus PCIE init fails.
+This patches the PCIE initialization error after warm reboot.
+The root of cause is, when the device is booted after power on,
+PHY stays in 'factory' state. After warm boot PHY stays in the
+previous state and prevents any training, thus PCIE init fails.
 
 Signed-off-by: Andrey Safonov <andrey.safonov@gmail.com>
 ---

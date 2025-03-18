@@ -3,7 +3,11 @@ From: Valmantas Paliksa <walmis@gmail.com>
 Date: Thu, 12 Dec 2024 12:24:33 +0200
 Subject: [PATCH] Disable PHY_LANE_IDLE_OFF for each instance of rockchip_pcie_phy_power_one
 
-This patch fixes an issue in the Rockchip PCIe PHY driver where, after a warm restart of the rockchip_pcie_phy module, PCIe lanes other than lane 0 could remain stuck in the PHY_LANE_IDLE_OFF state. This resulted in the PCIe link being restricted to x1 mode, even in configurations designed to use multiple lanes.
+This patch fixes an issue in the Rockchip PCIe PHY driver where, after
+a warm restart of the rockchip_pcie_phy module, PCIe lanes other than
+lane 0 could remain stuck in the PHY_LANE_IDLE_OFF state. This resulted
+in the PCIe link being restricted to x1 mode, even in configurations
+designed to use multiple lanes.
 
 Signed-off-by: Valmantas Paliksa <walmis@gmail.com>
 ---
