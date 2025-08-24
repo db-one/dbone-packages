@@ -1,11 +1,11 @@
 {
-    "Number":  232,
+    "Number":  234,
     "Message":  "- ADLX bugfix\r\n- Updated tray icon page\r\n- Improved refresh mechanism showing what sensors are missing",
     "Checksums":  {
-                      "FanControl_4_8":  "6952CAC53C885B23D68EF8FB154970C6",
-                      "FanControl_8_0":  "B7632BF836E6D0AEB00465F226F12997",
-                      "FanControl_4_8_Installer":  "E34FA7AF045C30CD85E2C3613CD7BCFC",
-                      "FanControl_8_0_Installer":  "232212F08421AF9846BAA72C20A6A43F",
+                      "FanControl_4_8":  "B14C454B1D07810456DCBE157461E049",
+                      "FanControl_8_0":  "465CB987F821FA7E6F0FA8ABC82BCE88",
+                      "FanControl_4_8_Installer":  "9D0FF805F7ED60B56EEB4990285057C7",
+                      "FanControl_8_0_Installer":  "58E2E2DBF2A5A325598BC6CC9270600F",
                       "Updater":  "82745C6CC3D8598898AA2CE81A8DFF2E"
                   }
 }
