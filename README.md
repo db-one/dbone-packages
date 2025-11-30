@@ -15,7 +15,7 @@
 ###### luci-app-filetransfer   #文件传输
 #
 ###  依赖
-myautocore    #加强版的预览信息autocore，可显示温度，网卡MAC，时间等详细信息，需删除原版autocore
+
 
 ### 2333
 ###### helloworld
