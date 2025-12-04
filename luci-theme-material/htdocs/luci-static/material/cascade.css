@@ -347,7 +347,6 @@ small {
 	height: calc(100% - 4rem);
 	background-color: var(--menu-bg-color);
 	transition: visibility 400ms, width 400ms;
-	z-index: 800;
 }
 
 .main-right {
@@ -370,9 +369,7 @@ small {
 	float: left;
 }
 
-.nowrap:not(.td span) {
-/*	Sometimes you need to wrap: badges on narrow screens look weird 
-	and nowrap defeats other width constraints, so exclude span */
+.nowrap:not(.td) {
 	white-space: nowrap;
 }
 
@@ -1596,14 +1593,6 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 	color: var(--main-menu-color);
 }
 
-.cbi-dropdown.btn.cbi-button.cbi-button-positive.important > ul > li[display] {
-	color: var(--white-color);
-}
-
-.cbi-dropdown[open] > ul.dropdown > li[tabindex] {
-	color: var(--black-color) !important;
-}
-
 .cbi-dropdown > ul > li[display],
 .cbi-dropdown[open] > ul.preview,
 .cbi-dropdown[open] > ul.dropdown > li,
@@ -1636,7 +1625,6 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 
 .cbi-dropdown[open] > ul.dropdown > li[selected] {
 	background: #b0d0f0;
-	color: var(--black-color);
 }
 
 .cbi-dropdown[open] > ul.dropdown > li.focus,
@@ -1647,7 +1635,6 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 .cbi-dropdown[open] > ul.dropdown > li:last-child {
 	margin-bottom: 0;
 	border-bottom: 0;
-	color: var(--black-color);
 }
 
 .cbi-dropdown[open] > ul.dropdown > li[unselectable] {
@@ -1794,14 +1781,13 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 .modal .button-row {
 	display: flex;
 	justify-content: space-between;
-	flex-wrap: wrap;
 }
 
-.modal .button-row > button:not(:first-of-type) {
+.modal .button-row > :not(:last-child) {
 	margin-right: .5em;
 }
 
-.modal .button-row > button:first-of-type {
+.modal .button-row > :first-child {
 	margin-right: auto;
 }
 
@@ -1961,6 +1947,7 @@ td > .ifacebadge,
 
 #syslog {
 	font-size: small;
+	overflow-y: hidden;
 	width: 100%;
 	min-height: 15rem;
 	padding: 1rem;
@@ -2082,11 +2069,6 @@ td > .ifacebadge,
 
 .ifacebox-body {
 	padding: .25em;
-}
-
-#cbi-network-interface .ifacebox img {
-	width: 24px;
-	height: 24px;
 }
 
 .cbi-image-button {
