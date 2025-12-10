@@ -19,22 +19,21 @@ PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 include $(INCLUDE_DIR)/package.mk
 
-define KernelPackage/usb-net-rtl8152-vendor
-  VERSION:=$(LINUX_VERSION)+$(PKG_VERSION)-$(BOARD)-$(PKG_RELEASE)
-  TITLE:=Realtek RTL8152/RTL8153/RTL8154/RTL8156/RTL8157/RTL815A driver
-  SUBMENU:=USB Support
-  DEPENDS:=+kmod-usb-net +(LINUX_6_12||LINUX_6_18):kmod-libphy
+define KernelPackage/r8152
+  SUBMENU:=Network Devices
+  TITLE:=Realtek RTL815X USB Ethernet driver
+  DEPENDS:=+kmod-usb-net +kmod-libphy
   FILES:=$(PKG_BUILD_DIR)/r8152.ko
   AUTOLOAD:=$(call AutoProbe,r8152)
   CONFLICTS:=kmod-usb-net-rtl8152
 endef
 
-define KernelPackage/usb-net-rtl8152-vendor/description
-  Kernel module for Realtek Realtek USB 1G / 2.5G / 5G / 10G Ethernet Chipsets
+define KernelPackage/r8152/description
+  Kernel module for Realtek USB Ethernet Chipsets
 endef
 
 define Build/Compile
 	+$(KERNEL_MAKE) M=$(PKG_BUILD_DIR) modules
 endef
 
-$(eval $(call KernelPackage,usb-net-rtl8152-vendor))
+$(eval $(call KernelPackage,r8152))
