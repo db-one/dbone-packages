@@ -41,6 +41,7 @@
 ###### luci-app-control-weburl    #网址过滤
 ###### luci-app-control-webrestriction    #访问限制
 ###### luci-app-ddnsto    #小宝开发的DDNS.to内网穿透
+###### luci-app-bandix    #OpenWrt 网络流量监控
 ###### luci-app-serverchan    #微信推送
 ###### luci-app-pushbot    #基于原版微信推送修改，支持更多协议
 ###### luci-app-smartdns    #smartdns DNS加速
