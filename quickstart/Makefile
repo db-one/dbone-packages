@@ -29,7 +29,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=Web Servers/Proxies
 	TITLE:=Quickstart, the quick start.
 	DEPENDS:=@(x86_64||aarch64||arm) +shadow-utils +shadow-useradd +mount-utils +block-mount +lsblk +e2fsprogs +parted \
-		+smartmontools +smartmontools-drivedb +ip-full +ubus +uci +bash
+		+ip-full +ubus +uci +bash
 	URL:=https://easepi.linkease.com/
 endef
 
