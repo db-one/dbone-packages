@@ -2,7 +2,6 @@ local api = require "luci.passwall.api"
 local appname = "passwall"
 local fs = api.fs
 local sys = api.sys
-local uci = api.uci
 local datatypes = api.datatypes
 local path = string.format("/usr/share/%s/rules/", appname)
 local gfwlist_path = "/usr/share/passwall/rules/gfwlist"
@@ -10,20 +9,6 @@ local chnlist_path = "/usr/share/passwall/rules/chnlist"
 local chnroute_path = "/usr/share/passwall/rules/chnroute"
 
 m = Map(appname)
-api.set_apply_on_parse(m)
-
-function clean_text(text)
-	local nbsp = string.char(0xC2, 0xA0) -- 不间断空格（U+00A0）
-	local fullwidth_space = string.char(0xE3, 0x80, 0x80) -- 全角空格（U+3000）
-	return text
-		:gsub("\t", " ")
-		:gsub(nbsp, " ")
-		:gsub(fullwidth_space, " ")
-		:gsub("^%s+", "")
-		:gsub("%s+$", "\n")
-		:gsub("\r\n", "\n")
-		:gsub("[ \t]*\n[ \t]*", "\n")
-end
 
 -- [[ Rule List Settings ]]--
 s = m:section(TypedSection, "global_rules")
@@ -53,10 +38,10 @@ o.remove = function(self, section, value)
 end
 o.validate = function(self, value)
 	local hosts= {}
-	value = clean_text(value)
+	value = value:gsub("^%s+", ""):gsub("%s+$","\n"):gsub("\r\n","\n"):gsub("[ \t]*\n[ \t]*", "\n")
 	string.gsub(value, '[^' .. "\r\n" .. ']+', function(w) table.insert(hosts, w) end)
 	for index, host in ipairs(hosts) do
-		if host:sub(1, 1) == "#" or host:sub(1, 8) == "geosite:" then
+		if host:sub(1, 1) == "#" then
 			return value
 		end
 		if not datatypes.hostname(host) then
@@ -82,10 +67,10 @@ o.remove = function(self, section, value)
 end
 o.validate = function(self, value)
 	local ipmasks= {}
-	value = clean_text(value)
+	value = value:gsub("^%s+", ""):gsub("%s+$","\n"):gsub("\r\n","\n"):gsub("[ \t]*\n[ \t]*", "\n")
 	string.gsub(value, '[^' .. "\r\n" .. ']+', function(w) table.insert(ipmasks, w) end)
 	for index, ipmask in ipairs(ipmasks) do
-		if ipmask:sub(1, 1) == "#" or ipmask:sub(1, 6) == "geoip:" then
+		if ipmask:sub(1, 1) == "#" then
 			return value
 		end
 		if not ( datatypes.ipmask4(ipmask) or datatypes.ipmask6(ipmask) ) then
@@ -113,10 +98,10 @@ o.remove = function(self, section, value)
 end
 o.validate = function(self, value)
 	local hosts= {}
-	value = clean_text(value)
+	value = value:gsub("^%s+", ""):gsub("%s+$","\n"):gsub("\r\n","\n"):gsub("[ \t]*\n[ \t]*", "\n")
 	string.gsub(value, '[^' .. "\r\n" .. ']+', function(w) table.insert(hosts, w) end)
 	for index, host in ipairs(hosts) do
-		if host:sub(1, 1) == "#" or host:sub(1, 8) == "geosite:" then
+		if host:sub(1, 1) == "#" then
 			return value
 		end
 		if not datatypes.hostname(host) then
@@ -142,10 +127,10 @@ o.remove = function(self, section, value)
 end
 o.validate = function(self, value)
 	local ipmasks= {}
-	value = clean_text(value)
+	value = value:gsub("^%s+", ""):gsub("%s+$","\n"):gsub("\r\n","\n"):gsub("[ \t]*\n[ \t]*", "\n")
 	string.gsub(value, '[^' .. "\r\n" .. ']+', function(w) table.insert(ipmasks, w) end)
 	for index, ipmask in ipairs(ipmasks) do
-		if ipmask:sub(1, 1) == "#" or ipmask:sub(1, 6) == "geoip:" then
+		if ipmask:sub(1, 1) == "#" then
 			return value
 		end
 		if not ( datatypes.ipmask4(ipmask) or datatypes.ipmask6(ipmask) ) then
@@ -171,10 +156,10 @@ o.remove = function(self, section, value)
 end
 o.validate = function(self, value)
 	local hosts= {}
-	value = clean_text(value)
+	value = value:gsub("^%s+", ""):gsub("%s+$","\n"):gsub("\r\n","\n"):gsub("[ \t]*\n[ \t]*", "\n")
 	string.gsub(value, '[^' .. "\r\n" .. ']+', function(w) table.insert(hosts, w) end)
 	for index, host in ipairs(hosts) do
-		if host:sub(1, 1) == "#" or host:sub(1, 8) == "geosite:" then
+		if host:sub(1, 1) == "#" then
 			return value
 		end
 		if not datatypes.hostname(host) then
@@ -200,10 +185,10 @@ o.remove = function(self, section, value)
 end
 o.validate = function(self, value)
 	local ipmasks= {}
-	value = clean_text(value)
+	value = value:gsub("^%s+", ""):gsub("%s+$","\n"):gsub("\r\n","\n"):gsub("[ \t]*\n[ \t]*", "\n")
 	string.gsub(value, '[^' .. "\r\n" .. ']+', function(w) table.insert(ipmasks, w) end)
 	for index, ipmask in ipairs(ipmasks) do
-		if ipmask:sub(1, 1) == "#" or ipmask:sub(1, 6) == "geoip:" then
+		if ipmask:sub(1, 1) == "#" then
 			return value
 		end
 		if not ( datatypes.ipmask4(ipmask) or datatypes.ipmask6(ipmask) ) then
@@ -229,7 +214,7 @@ o.remove = function(self, section, value)
 end
 o.validate = function(self, value)
 	local ipmasks= {}
-	value = clean_text(value)
+	value = value:gsub("^%s+", ""):gsub("%s+$","\n"):gsub("\r\n","\n"):gsub("[ \t]*\n[ \t]*", "\n")
 	string.gsub(value, '[^' .. "\r\n" .. ']+', function(w) table.insert(ipmasks, w) end)
 	for index, ipmask in ipairs(ipmasks) do
 		if ipmask:sub(1, 1) == "#" then
@@ -258,7 +243,7 @@ o.remove = function(self, section, value)
 end
 o.validate = function(self, value)
 	local ipmasks= {}
-	value = clean_text(value)
+	value = value:gsub("^%s+", ""):gsub("%s+$","\n"):gsub("\r\n","\n"):gsub("[ \t]*\n[ \t]*", "\n")
 	string.gsub(value, '[^' .. "\r\n" .. ']+', function(w) table.insert(ipmasks, w) end)
 	for index, ipmask in ipairs(ipmasks) do
 		if ipmask:sub(1, 1) == "#" then
@@ -280,67 +265,56 @@ o.cfgvalue = function(self, section)
 	return fs.readfile(hosts) or ""
 end
 o.write = function(self, section, value)
-	fs.writefile(hosts, clean_text(value))
+	fs.writefile(hosts, value:gsub("^%s+", ""):gsub("%s+$","\n"):gsub("\r\n","\n"):gsub("[ \t]*\n[ \t]*", "\n"))
 end
 o.remove = function(self, section, value)
 	fs.writefile(hosts, "")
 end
 
-if fs.access(gfwlist_path) then
+if api.fs.access(gfwlist_path) then
 	s:tab("gfw_list", translate("GFW List"))
-	o = s:taboption("gfw_list", DummyValue, "_gfw_fieldset")
-	o.rawhtml = true
-	o.default = string.format([[
-		<div style="display: flex; align-items: center;">
-			<input class="btn cbi-button cbi-button-add" type="button" onclick="read_gfw()" value="%s" />
-			<label id="gfw_total_lines" style="margin-left: auto; margin-right: 10px;"></label>
-		</div>
-		<textarea id="gfw_textarea" class="cbi-input-textarea" style="width: 100%%; margin-top: 10px;" rows="40" wrap="off" readonly="readonly"></textarea>
-	]], translate("Read List"))
+	o = s:taboption("gfw_list", TextValue, "gfw_list", "")
+	o.readonly = true
+	o.rows = 45
+	o.wrap = "off"
+	o.cfgvalue = function(self, section)
+		return fs.readfile(gfwlist_path) or ""
+	end
 end
 
-if fs.access(chnlist_path) then
+if api.fs.access(chnlist_path) then
 	s:tab("chn_list", translate("China List") .. "(" .. translate("Domain") .. ")")
-	o = s:taboption("chn_list", DummyValue, "_chn_fieldset")
-	o.rawhtml = true
-	o.default = string.format([[
-		<div style="display: flex; align-items: center;">
-			<input class="btn cbi-button cbi-button-add" type="button" onclick="read_chn()" value="%s" />
-			<label id="chn_total_lines" style="margin-left: auto; margin-right: 10px;"></label>
-		</div>
-		<textarea id="chn_textarea" class="cbi-input-textarea" style="width: 100%%; margin-top: 10px;" rows="40" wrap="off" readonly="readonly"></textarea>
-	]], translate("Read List"))
+	o = s:taboption("chn_list", TextValue, "chn_list", "")
+	o.readonly = true
+	o.rows = 45
+	o.wrap = "off"
+	o.cfgvalue = function(self, section)
+		return fs.readfile(chnlist_path) or ""
+	end
 end
 
-if fs.access(chnroute_path) then
+if api.fs.access(chnroute_path) then
 	s:tab("chnroute_list", translate("China List") .. "(IP)")
-	o = s:taboption("chnroute_list", DummyValue, "_chnroute_fieldset")
-	o.rawhtml = true
-	o.default = string.format([[
-		<div style="display: flex; align-items: center;">
-			<input class="btn cbi-button cbi-button-add" type="button" onclick="read_chnroute()" value="%s" />
-			<label id="chnroute_total_lines" style="margin-left: auto; margin-right: 10px;"></label>
-		</div>
-		<textarea id="chnroute_textarea" class="cbi-input-textarea" style="width: 100%%; margin-top: 10px;" rows="40" wrap="off" readonly="readonly"></textarea>
-	]], translate("Read List"))
+	o = s:taboption("chnroute_list", TextValue, "chnroute_list", "")
+	o.readonly = true
+	o.rows = 45
+	o.wrap = "off"
+	o.cfgvalue = function(self, section)
+		return fs.readfile(chnroute_path) or ""
+	end
 end
 
 m:append(Template(appname .. "/rule_list/js"))
 
-local geo_dir = (uci:get(appname, "@global_rules[0]", "v2ray_location_asset") or "/usr/share/v2ray/"):match("^(.*)/")
-local geosite_path = geo_dir .. "/geosite.dat"
-local geoip_path = geo_dir .. "/geoip.dat"
-if api.finded_com("geoview") and fs.access(geosite_path) and fs.access(geoip_path) then
-	if api.compare_versions(api.get_app_version("geoview"), ">=", "0.1.0") then
-		s:tab("geoview", translate("Geo View"))
-		o = s:taboption("geoview", DummyValue, "_geoview_fieldset")
-		o.rawhtml = true
-		o.template = appname .. "/rule_list/geoview"
+if sys.call('[ -f "/www/luci-static/resources/uci.js" ]') == 0 then
+	m.apply_on_parse = true
+	function m.on_apply(self)
+		luci.sys.call("/etc/init.d/passwall reload > /dev/null 2>&1 &")
 	end
 end
 
-m.on_before_save = function(self)
-	m:set("@global[0]", "flush_set", "1")
+function m.on_commit(self)
+	luci.sys.call('[ -n "$(nft list sets 2>/dev/null | grep \"passwall_\")" ] && sh /usr/share/passwall/nftables.sh flush_nftset || sh /usr/share/passwall/iptables.sh flush_ipset > /dev/null 2>&1 &')
 end
 
 return m

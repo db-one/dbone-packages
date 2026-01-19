@@ -3,44 +3,7 @@ local appname = "passwall"
 local datatypes = api.datatypes
 
 m = Map(appname, "Sing-Box/Xray " .. translate("Shunt Rule"))
-m.redirect = api.url("rule")
-api.set_apply_on_parse(m)
-
-if not arg[1] or not m:get(arg[1]) then
-	luci.http.redirect(m.redirect)
-end
-
-m.on_before_save = function(self)
-	m:set("@global[0]", "flush_set", "1")
-end
-
--- Add inline CSS to map description
-m.description = (m.description or "") .. "\n" .. [[
-	<style>
-		div[id^="cbid.passwall."] .cbi-value-field {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 1em;
-		}
-		div[id^="cbid.passwall."] .cbi-checkbox {
-			display: inline-flex;
-			align-items: center;
-		}
-	</style>
-]]
-
-function clean_text(text)
-	local nbsp = string.char(0xC2, 0xA0) -- 不间断空格（U+00A0）
-	local fullwidth_space = string.char(0xE3, 0x80, 0x80) -- 全角空格（U+3000）
-	return text
-		:gsub("\t", " ")
-		:gsub(nbsp, " ")
-		:gsub(fullwidth_space, " ")
-		:gsub("^%s+", "")
-		:gsub("%s+$", "\n")
-		:gsub("\r\n", "\n")
-		:gsub("[ \t]*\n[ \t]*", "\n")
-end
+m.redirect = api.url()
 
 s = m:section(NamedSection, arg[1], "shunt_rules", "")
 s.addremove = false
@@ -54,14 +17,10 @@ protocol = s:option(MultiValue, "protocol", translate("Protocol"))
 protocol:value("http")
 protocol:value("tls")
 protocol:value("bittorrent")
-protocol.widget = "checkbox"
-protocol.default = nil
 
 o = s:option(MultiValue, "inbound", translate("Inbound Tag"))
 o:value("tproxy", translate("Transparent proxy"))
 o:value("socks", "Socks")
-o.widget = "checkbox"
-o.default = nil
 
 network = s:option(ListValue, "network", translate("Network"))
 network:value("tcp,udp", "TCP UDP")
@@ -138,8 +97,6 @@ end
 
 source.write = dynamicList_write
 
-sourcePort = s:option(Value, "sourcePort", translate("Source port"))
-
 port = s:option(Value, "port", translate("port"))
 
 domain_list = s:option(TextValue, "domain_list", translate("Domain"))
@@ -147,7 +104,7 @@ domain_list.rows = 10
 domain_list.wrap = "off"
 domain_list.validate = function(self, value)
 	local hosts= {}
-	value = clean_text(value)
+	value = value:gsub("^%s+", ""):gsub("%s+$","\n"):gsub("\r\n","\n"):gsub("[ \t]*\n[ \t]*", "\n")
 	string.gsub(value, "[^\r\n]+", function(w) table.insert(hosts, w) end)
 	for index, host in ipairs(hosts) do
 		local flag = 1
@@ -186,7 +143,7 @@ ip_list.rows = 10
 ip_list.wrap = "off"
 ip_list.validate = function(self, value)
 	local ipmasks= {}
-	value = clean_text(value)
+	value = value:gsub("^%s+", ""):gsub("%s+$","\n"):gsub("\r\n","\n"):gsub("[ \t]*\n[ \t]*", "\n")
 	string.gsub(value, "[^\r\n]+", function(w) table.insert(ipmasks, w) end)
 	for index, ipmask in ipairs(ipmasks) do
 		if ipmask:find("geoip:") and ipmask:find("geoip:") == 1 and not ipmask:find("%s") then
