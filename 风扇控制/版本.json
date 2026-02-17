@@ -1,11 +1,11 @@
 {
-    "Number":  259,
-    "Message":  "- Support for PawnIO 2.1.0 driver\r\n- Progressive increase in % if fan fails to start at start%\r\n- Fixed a bug causing a refresh loop\r\n- Fixed a bug causing tray icons to not use the windows theme\r\n- Fixed a bug causing disabled controls in manual mode to enable upon refresh",
+    "Number":  260,
+    "Message":  "- Fix a bug where the first launch sequence would not finish properly\r\n- Add power monitor source to LHM\r\n- Fix a display bug in tray icon page\r\n- Fix a bug where speed sensors \"hide\" property would not get saved properly\r\n- Fix a bug where having 2x the same plugin would cause refresh issues",
     "Checksums":  {
-                      "FanControl_4_8":  "74BED805162BAA54B620DC173DCD7065",
-                      "FanControl_10_0":  "0FEC836F07EB7DC5B5922AF497D5D87C",
-                      "FanControl_4_8_Installer":  "9F318B97AEDD378BF96B3A981933A024",
-                      "FanControl_10_0_Installer":  "3BE8BCC6E95E7805A6D80C34418D8A73",
+                      "FanControl_4_8":  "14D325034F0B79385BEEDBBCBDA58B2C",
+                      "FanControl_10_0":  "A8153D09D87575878300EE0927647C46",
+                      "FanControl_4_8_Installer":  "25CEB438072491E206A6ACB9783C6DA7",
+                      "FanControl_10_0_Installer":  "E0374115F1612F41AAE3F4166E7998EF",
                       "Updater":  "8445CA16D4EC4D0791F71C025B56FF0C"
                   }
 }
