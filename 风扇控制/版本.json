@@ -1,11 +1,11 @@
 {
-    "Number":  260,
-    "Message":  "- Fix a bug where the first launch sequence would not finish properly\r\n- Add power monitor source to LHM\r\n- Fix a display bug in tray icon page\r\n- Fix a bug where speed sensors \"hide\" property would not get saved properly\r\n- Fix a bug where having 2x the same plugin would cause refresh issues",
+    "Number":  261,
+    "Message":  "- Configuration files can now be loaded/saved from any folder.\r\n- Resuming from sleep should no longer trigger a ask for save.\r\n- Graph point should now update properly on cancel",
     "Checksums":  {
-                      "FanControl_4_8":  "14D325034F0B79385BEEDBBCBDA58B2C",
-                      "FanControl_10_0":  "A8153D09D87575878300EE0927647C46",
-                      "FanControl_4_8_Installer":  "25CEB438072491E206A6ACB9783C6DA7",
-                      "FanControl_10_0_Installer":  "E0374115F1612F41AAE3F4166E7998EF",
+                      "FanControl_4_8":  "893288F9E2E4657731C7981EB94BF166",
+                      "FanControl_10_0":  "B99A6A9D1C36AD2D60FE76098C2C3E02",
+                      "FanControl_4_8_Installer":  "9D78BA022E27B27B3AB8E372C5242228",
+                      "FanControl_10_0_Installer":  "CED733AAB0269E8543BA0F8F27010C8D",
                       "Updater":  "8445CA16D4EC4D0791F71C025B56FF0C"
                   }
 }
