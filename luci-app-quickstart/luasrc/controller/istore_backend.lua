@@ -1,5 +1,6 @@
 -- Copyright 2022 xiaobao <xiaobao@linkease.com>
 -- Licensed to the public under the MIT License
+-- 修复quickstart首页温度显示异常
 
 local http = require "luci.http"
 local nixio = require "nixio"
