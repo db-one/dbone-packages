@@ -5,6 +5,9 @@
 			"file": {
 				"/var/run/openlist/log/openlist.log": [ "read" ]
 			},
+			"ubus": {
+				"service": [ "list" ]
+			},
 			"uci": [ "openlist" ]
 		},
 		"write": {

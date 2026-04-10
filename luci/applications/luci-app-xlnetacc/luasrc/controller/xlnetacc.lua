@@ -5,17 +5,29 @@ function index()
 		return
 	end
 
-	entry({"admin", "services", "xlnetacc"}, alias("admin", "services", "xlnetacc", "general"), _("XLNetAcc"), 90).dependent = true
-	entry({"admin", "services", "xlnetacc", "general"}, cbi("xlnetacc"), _("Settings"), 1).leaf = true
-	entry({"admin", "services", "xlnetacc", "log"}, template("xlnetacc/logview"), _("Log"), 2).leaf = true
-	entry({"admin", "services", "xlnetacc", "status"}, call("action_status")).leaf = true
-	entry({"admin", "services", "xlnetacc", "logdata"}, call("action_log")).leaf = true
+	local page = entry({"admin", "services", "xlnetacc"},
+		firstchild(), _("XLNetAcc"))
+	page.dependent = false
+	page.acl_depends = { "luci-app-xlnetacc" }
+
+	entry({"admin", "services", "xlnetacc", "general"},
+		cbi("xlnetacc"), _("Settings"), 1)
+
+	entry({"admin", "services", "xlnetacc", "log"},
+		template("xlnetacc/logview"), _("Log"), 2)
+
+	entry({"admin", "services", "xlnetacc", "status"}, call("action_status"))
+	entry({"admin", "services", "xlnetacc", "logdata"}, call("action_log"))
+end
+
+local function is_running()
+	return luci.sys.call("(ps | grep xlnetacc.sh | grep -v 'grep') >/dev/null" ) == 0
 end
 
 function action_status()
 	luci.http.prepare_content("application/json")
 	luci.http.write_json({
-		run_state = luci.sys.call("ps -w | grep xlnetacc.sh | grep -v grep >/dev/null")==0,
+		run_state = is_running(),
 		down_state = nixio.fs.readfile("/var/state/xlnetacc_down_state") or "",
 		up_state = nixio.fs.readfile("/var/state/xlnetacc_up_state") or ""
 	})
@@ -24,13 +36,14 @@ end
 function action_log()
 	local uci = require "luci.model.uci".cursor()
 	local util = require "luci.util"
-	local log_data = {}
+	local log_data = { }
 
 	log_data.syslog = util.trim(util.exec("logread | grep xlnetacc"))
-	if uci:get("xlnetacc","general","logging")~="0" then
+	if uci:get("xlnetacc", "general", "logging") ~= "0" then
 		log_data.client = nixio.fs.readfile("/var/log/xlnetacc.log") or ""
 	end
 	uci:unload("xlnetacc")
+
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(log_data)
 end

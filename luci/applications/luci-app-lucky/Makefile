@@ -19,6 +19,6 @@ define Package/$(PKG_NAME)/conffiles
 /etc/lucky/lucky.conf
 endef
 
-include ../../luci.mk
+include $(TOPDIR)/feeds/luci/luci.mk
 
 # call BuildPackage - OpenWrt buildroot signature
