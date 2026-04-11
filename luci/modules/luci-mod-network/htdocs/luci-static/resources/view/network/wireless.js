@@ -154,6 +154,15 @@ function getDisplayBSSID(radioNet) {
 	return bssid || null;
 }
 
+function getFtIdentifier(radioNet) {
+	var bssid = getDisplayBSSID(radioNet);
+
+	if (!bssid)
+		return null;
+
+	return String(bssid).replace(/:/g, '').toUpperCase();
+}
+
 function getDisplayTxPower(radioNet) {
 	var txpower = radioNet.getTXPower();
 
@@ -831,83 +840,90 @@ var CBIWifiFrequencyValue = form.Value.extend({
 				htmodelist.VHT80 || htmodelist.VHT160
 			);
 
-			var has_ax = hwmodelist.ax && (
+				var has_ax = hwmodelist.ax && (
 				L.hasSystemFeature('hostapd', '11ax') ||
 				htmodelist.HE20 || htmodelist.HE40 ||
 				htmodelist.HE80 || htmodelist.HE160
 			);
 
-				var has_be = hwmodelist.be && (
-					L.hasSystemFeature('hostapd', '11be') ||
-					htmodelist.EHT20 || htmodelist.EHT40 || htmodelist.EHT80 ||
-					htmodelist.EHT160 || htmodelist.EHT320
-				);
+			var has_be = hwmodelist.be && (
+				L.hasSystemFeature('hostapd', '11be') ||
+				htmodelist.EHT20 || htmodelist.EHT40 || htmodelist.EHT80 ||
+				htmodelist.EHT160 || htmodelist.EHT320
+			);
 
-				if (isQcaWifiHwtype(hwtype)) {
-					has_ac = has_ac || /^11ac/.test(hwval);
-					has_ax = has_ax || /^11ax/.test(hwval);
-					has_be = has_be || /^11be/.test(hwval);
-					hwmodelist.n = hwmodelist.n || /^11n/.test(hwval);
+			if (isQcaWifiHwtype(hwtype)) {
+				var qca_has_be = has_be || /^11be/.test(hwval),
+				    qca_has_ax = qca_has_be || has_ax || /^11ax/.test(hwval),
+				    qca_has_ac = qca_has_ax || has_ac || /^11ac/.test(hwval),
+				    qca_has_n = qca_has_ac || hwmodelist.n || /^11n/.test(hwval),
+				    qca_has_htinfo = (Object.keys(htmodelist).length > 0),
+				    qca_ht20 = !!(!qca_has_htinfo || htmodelist.HT20 || htmodelist.VHT20 || htmodelist.HE20 || htmodelist.EHT20 || /^HT20$/.test(htval)),
+				    qca_ht40 = !!(!qca_has_htinfo || htmodelist.HT40 || htmodelist.VHT40 || htmodelist.HE40 || htmodelist.EHT40 || /^HT40$/.test(htval)),
+				    qca_ht80 = !!(!qca_has_htinfo || htmodelist.VHT80 || htmodelist.HE80 || htmodelist.EHT80 || /^HT80$/.test(htval)),
+				    qca_ht160 = !!(htmodelist.VHT160 || htmodelist.HE160 || htmodelist.EHT160 || /^HT160$/.test(htval)),
+				    qca_ht320 = !!(htmodelist.EHT320 || /^HT320$/.test(htval)),
+				    qca_ht80p80 = !!(/^HT80_80$/.test(htval));
 
-					this.modes = [
-						'', 'Legacy', false,
-						'n', 'N', true,
-						'ac', 'AC', (hwtype == 'qcawifi' || hwtype == 'qcawificfg80211' || has_ac),
-						'ax', 'AX', (hwtype == 'qcawificfg80211' || has_ax),
-						'be', 'BE', (hwtype == 'qcawificfg80211' || has_be)
-					];
+				this.modes = [
+					'', 'Legacy', false,
+					'n', 'N', qca_has_n,
+					'ac', 'AC', qca_has_ac,
+					'ax', 'AX', qca_has_ax,
+					'be', 'BE', qca_has_be
+				];
 
-					this.htmodes = {
-						'': [ '', '-', true ],
-						'n': [
-							'HT20', '20 MHz', true,
-							'HT40', '40 MHz', true
-						],
-						'ac': [
-							'HT20', '20 MHz', true,
-							'HT40', '40 MHz', true,
-							'HT80', '80 MHz', true,
-							'HT160', '160 MHz', true,
-							'HT80_80', '80+80 MHz', true
-						],
-						'ax': [
-							'HT20', '20 MHz', true,
-							'HT40', '40 MHz', true,
-							'HT80', '80 MHz', true,
-							'HT160', '160 MHz', true
-						],
-						'be': [
-							'HT20', '20 MHz', true,
-							'HT40', '40 MHz', true,
-							'HT80', '80 MHz', true,
-							'HT160', '160 MHz', true,
-							'HT320', '320 MHz', true
-						]
-					};
+				this.htmodes = {
+					'': [ '', '-', true ],
+					'n': [
+						'HT20', '20 MHz', qca_ht20,
+						'HT40', '40 MHz', qca_ht40
+					],
+					'ac': [
+						'HT20', '20 MHz', qca_ht20,
+						'HT40', '40 MHz', qca_ht40,
+						'HT80', '80 MHz', qca_ht80,
+						'HT160', '160 MHz', qca_ht160,
+						'HT80_80', '80+80 MHz', qca_ht80p80
+					],
+					'ax': [
+						'HT20', '20 MHz', qca_ht20,
+						'HT40', '40 MHz', qca_ht40,
+						'HT80', '80 MHz', qca_ht80,
+						'HT160', '160 MHz', qca_ht160
+					],
+					'be': [
+						'HT20', '20 MHz', qca_ht20,
+						'HT40', '40 MHz', qca_ht40,
+						'HT80', '80 MHz', qca_ht80,
+						'HT160', '160 MHz', qca_ht160,
+						'HT320', '320 MHz', qca_ht320
+					]
+				};
 
-					this.bands = {
-						'': [
-							'2g', '2.4 GHz', this.channels['2g'].length > 0,
-							'5g', '5 GHz', this.channels['5g'].length > 0,
-							'6g', '6 GHz', this.channels['6g'].length > 0
-						],
-						'n': [
-							'2g', '2.4 GHz', this.channels['2g'].length > 0
-						],
-						'ac': [
-							'5g', '5 GHz', this.channels['5g'].length > 0
-						],
-						'ax': [
-							'2g', '2.4 GHz', this.channels['2g'].length > 0,
-							'5g', '5 GHz', this.channels['5g'].length > 0
-						],
-						'be': [
-							'2g', '2.4 GHz', this.channels['2g'].length > 0,
-							'5g', '5 GHz', this.channels['5g'].length > 0,
-							'6g', '6 GHz', this.channels['6g'].length > 0
-						]
-					};
-				}
+				this.bands = {
+					'': [
+						'2g', '2.4 GHz', this.channels['2g'].length > 0,
+						'5g', '5 GHz', this.channels['5g'].length > 0,
+						'6g', '6 GHz', this.channels['6g'].length > 0
+					],
+					'n': [
+						'2g', '2.4 GHz', this.channels['2g'].length > 0
+					],
+					'ac': [
+						'5g', '5 GHz', this.channels['5g'].length > 0
+					],
+					'ax': [
+						'2g', '2.4 GHz', this.channels['2g'].length > 0,
+						'5g', '5 GHz', this.channels['5g'].length > 0
+					],
+					'be': [
+						'2g', '2.4 GHz', this.channels['2g'].length > 0,
+						'5g', '5 GHz', this.channels['5g'].length > 0,
+						'6g', '6 GHz', this.channels['6g'].length > 0
+					]
+				};
+			}
 				else {
 					this.modes = [
 						'', 'Legacy', hwmodelist.a || hwmodelist.b || hwmodelist.g,
@@ -1663,6 +1679,10 @@ return view.extend({
 					o.placeholder = 100;
 					o.rmempty = true;
 				}
+				else if (isQcaWifiHwtype(hwtype)) {
+					o = ss.taboption('advanced', CBIWifiCountryValue, 'country', _('Country Code'));
+					o.wifiNetwork = radioNet;
+				}
 				else if (hwtype == 'mt_dbdc') {
 					o = ss.taboption('advanced', CBIWifiCountryValue, 'country', _('Country Code'));
 					o.wifiNetwork = radioNet;
@@ -1939,6 +1959,108 @@ return view.extend({
 
 					o = ss.taboption('advanced', form.Flag, 'disassoc_low_ack', _('Disassociate On Low Acknowledgement'), _('Allow AP mode to disconnect STAs based on low ACK condition'));
 					o.default = o.enabled;
+				}
+				else if (isQcaWifiHwtype(hwtype)) {
+					var mode = ss.children[0],
+					    bssid = ss.children[5];
+
+					mode.value('ap-wds', '%s (%s)'.format(_('Access Point'), _('WDS')));
+					mode.value('sta-wds', '%s (%s)'.format(_('Client'), _('WDS')));
+					mode.value('wds', _('Static WDS'));
+
+					if (hwtype == 'qcawificfg80211')
+						mode.value('mesh', '802.11s');
+
+					mode.write = function(section_id, value) {
+						switch (value) {
+						case 'ap-wds':
+							uci.set('wireless', section_id, 'mode', 'ap');
+							uci.set('wireless', section_id, 'wds', '1');
+							break;
+
+						case 'sta-wds':
+							uci.set('wireless', section_id, 'mode', 'sta');
+							uci.set('wireless', section_id, 'wds', '1');
+							break;
+
+						default:
+							uci.set('wireless', section_id, 'mode', value);
+							uci.unset('wireless', section_id, 'wds');
+							break;
+						}
+					};
+
+					mode.cfgvalue = function(section_id) {
+						var mode = uci.get('wireless', section_id, 'mode'),
+						    wds = uci.get('wireless', section_id, 'wds');
+
+						if (mode == 'ap' && wds)
+							return 'ap-wds';
+						else if (mode == 'sta' && wds)
+							return 'sta-wds';
+
+						return mode;
+					};
+
+					bssid.deps = [];
+					bssid.depends('mode', 'wds');
+
+					o = ss.taboption('general', form.Flag, 'hidden', _('Hide <abbr title="Extended Service Set Identifier">ESSID</abbr>'), _('Where the ESSID is hidden, clients may fail to roam and airtime efficiency may be significantly reduced.'));
+					o.depends('mode', 'ap');
+					o.depends('mode', 'ap-wds');
+					o.depends('mode', 'sta-wds');
+
+					o = ss.taboption('general', form.Flag, 'wmm', _('WMM Mode'), _('Where Wi-Fi Multimedia (WMM) Mode QoS is disabled, clients may be limited to 802.11a/802.11g rates.'));
+					o.depends('mode', 'ap');
+					o.depends('mode', 'ap-wds');
+					o.default = o.enabled;
+
+					o = ss.taboption('general', form.Flag, 'min_asoc_rssi_enable', _('Enable weak signal rejection'));
+					o.depends('mode', 'ap');
+					o.depends('mode', 'ap-wds');
+					o.cfgvalue = function(section_id) {
+						return (uci.get('wireless', section_id, 'min_asoc_rssi_enable') == '1' ||
+						        uci.get('wireless', section_id, 'min_asoc_rssi') != null) ? '1' : '0';
+					};
+
+					o = ss.taboption('general', form.Value, 'min_asoc_rssi', _('Minimum association RSSI'), _('Reject association requests from clients below this signal threshold.'));
+					o.optional = true;
+					o.placeholder = -90;
+					o.datatype = 'range(-100,0)';
+					o.depends({ mode: 'ap', min_asoc_rssi_enable: '1' });
+					o.depends({ mode: 'ap-wds', min_asoc_rssi_enable: '1' });
+
+					o = ss.taboption('advanced', form.Flag, 'doth', '802.11h');
+					o.depends('mode', 'ap');
+					o.depends('mode', 'ap-wds');
+
+					o = ss.taboption('advanced', form.Flag, 'isolate', _('Isolate Clients'), _('Prevents client-to-client communication'));
+					o.depends('mode', 'ap');
+					o.depends('mode', 'ap-wds');
+
+					o = ss.taboption('advanced', form.Flag, 'mu_beamformer', _('MU-MIMO'));
+					o.depends('mode', 'ap');
+					o.depends('mode', 'ap-wds');
+
+					o = ss.taboption('advanced', form.Flag, 'uapsd', _('U-APSD'));
+					o.depends('mode', 'ap');
+					o.depends('mode', 'ap-wds');
+
+					o = ss.taboption('advanced', form.Value, 'mcast_rate', _('Multicast Rate'));
+					o.depends('mode', 'ap');
+					o.depends('mode', 'ap-wds');
+
+					o = ss.taboption('advanced', form.Value, 'frag', _('Fragmentation Threshold'));
+					o.datatype = 'min(256)';
+					o.depends('mode', 'ap');
+					o.depends('mode', 'ap-wds');
+					o.placeholder = 2346;
+
+					o = ss.taboption('advanced', form.Value, 'rts', _('RTS/CTS Threshold'));
+					o.datatype = 'uinteger';
+					o.depends('mode', 'ap');
+					o.depends('mode', 'ap-wds');
+					o.placeholder = 2347;
 				}
 				else if (hwtype == 'mt_dbdc') {
 					var bssid = ss.children[5];
@@ -2564,6 +2686,130 @@ return view.extend({
 						/* TODO: na_mcast_to_ucast is missing: needs adding to hostapd.sh - nice to have */
 					}
 					/* 802.11v settings end */
+				}
+				else if (isQcaWifiHwtype(hwtype)) {
+					var roaming_encryptions = [ 'psk', 'psk2', 'psk-mixed' ];
+					var ft_identifier = getFtIdentifier(radioNet);
+
+					var applyFtIdentifierDefault = function(option, datatype) {
+						if (ft_identifier)
+							option.placeholder = ft_identifier;
+
+						if (datatype)
+							option.datatype = datatype;
+
+						option.write = function(section_id, value) {
+							value = String(value || '').trim() || ft_identifier;
+
+							if (value)
+								uci.set('wireless', section_id, this.option, value);
+							else
+								uci.unset('wireless', section_id, this.option);
+						};
+
+						option.remove = function(section_id) {
+							if (ft_identifier)
+								uci.set('wireless', section_id, this.option, ft_identifier);
+							else
+								uci.unset('wireless', section_id, this.option);
+						};
+					};
+
+					if (hwtype == 'qcawificfg80211') {
+						roaming_encryptions.push('sae');
+						roaming_encryptions.push('sae-mixed');
+					}
+
+					o = ss.taboption('roaming', form.Flag, 'ieee80211k', _('802.11k'), _('Enables The 802.11k standard provides information to discover the best available access point'));
+					add_dependency_permutations(o, { mode: ['ap', 'ap-wds'], encryption: roaming_encryptions });
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.Flag, 'rrm_neighbor_report', _('Neighbour Report'), _('802.11k: Enable neighbor report via radio measurements.'));
+					o.depends({ ieee80211k: '1' });
+					o.default = o.enabled;
+
+					o = ss.taboption('roaming', form.Flag, 'rrm_beacon_report', _('Beacon Report'), _('802.11k: Enable beacon report via radio measurements.'));
+					o.depends({ ieee80211k: '1' });
+					o.default = o.enabled;
+
+					o = ss.taboption('roaming', form.Flag, 'ieee80211v', _('802.11v'), _('Enables 802.11v allows client devices to exchange information about the network topology, facilitating overall improvement of the wireless network.'));
+					add_dependency_permutations(o, { mode: ['ap', 'ap-wds'], encryption: roaming_encryptions });
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.ListValue, 'time_advertisement', _('Time advertisement'), _('802.11v: Time Advertisement in management frames.'));
+					o.depends({ ieee80211v: '1' });
+					o.value('0', _('Disabled'));
+					o.value('2', _('Enabled'));
+					o.write = function(section_id, value) {
+						return this.super('write', [ section_id, (value == 2) ? value : null ]);
+					};
+
+					o = ss.taboption('roaming', form.Value, 'time_zone', _('Time zone'), _('802.11v: Local Time Zone Advertisement in management frames.'));
+					o.depends({ time_advertisement: '2' });
+					o.placeholder = uci.get('system', '@system[0]', 'timezone') || 'UTC8';
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.Flag, 'wnm_sleep_mode', _('WNM Sleep Mode'), _('802.11v: Wireless Network Management (WNM) Sleep Mode (extended sleep mode for stations).'));
+					o.depends({ ieee80211v: '1' });
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.Flag, 'bss_transition', _('BSS Transition'), _('802.11v: Basic Service Set (BSS) transition management.'));
+					o.depends({ ieee80211v: '1' });
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.Flag, 'ieee80211r', _('802.11r Fast Transition'), _('Enables fast roaming among access points that belong to the same Mobility Domain'));
+					add_dependency_permutations(o, { mode: ['ap', 'ap-wds'], encryption: roaming_encryptions });
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.Value, 'nasid', _('NAS ID'), _('Used for two different purposes: RADIUS NAS ID and 802.11r R0KH-ID. Not needed with normal WPA(2)-PSK.'));
+					o.depends({ ieee80211r: '1' });
+					o.rmempty = true;
+					applyFtIdentifierDefault(o);
+
+					o = ss.taboption('roaming', form.Value, 'mobility_domain', _('Mobility Domain'), _('4-character hexadecimal ID'));
+					o.depends({ ieee80211r: '1' });
+					o.placeholder = '4f57';
+					o.datatype = 'and(hexstring,length(4))';
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.Value, 'reassociation_deadline', _('Reassociation Deadline'), _('time units (TUs / 1.024 ms) [1000-65535]'));
+					o.depends({ ieee80211r: '1' });
+					o.placeholder = '1000';
+					o.datatype = 'range(1000,65535)';
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.ListValue, 'ft_over_ds', _('FT protocol'));
+					o.depends({ ieee80211r: '1' });
+					o.value('1', _('FT over DS'));
+					o.value('0', _('FT over the Air'));
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.Flag, 'ft_psk_generate_local', _('Generate PMK locally'), _('When using a PSK, the PMK can be generated locally without inter AP communications'));
+					o.depends({ ieee80211r: '1' });
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.Value, 'r0_key_lifetime', _('R0 Key Lifetime'), _('minutes'));
+					o.depends({ ieee80211r: '1', ft_psk_generate_local: '' });
+					o.placeholder = '10000';
+					o.datatype = 'uinteger';
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.Value, 'r1_key_holder', _('R1 Key Holder'), _('6-octet identifier as a hex string - no colons'));
+					o.depends({ ieee80211r: '1', ft_psk_generate_local: '' });
+					o.rmempty = true;
+					applyFtIdentifierDefault(o, 'and(hexstring,length(12))');
+
+					o = ss.taboption('roaming', form.Flag, 'pmk_r1_push', _('PMK R1 Push'));
+					o.depends({ ieee80211r: '1', ft_psk_generate_local: '' });
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.DynamicList, 'r0kh', _('External R0 Key Holder List'), _('List of R0KHs in the same Mobility Domain. <br />Format: MAC-address,NAS-Identifier,128-bit key as hex string. <br />This list is used to map R0KH-ID (NAS Identifier) to a destination MAC address when requesting PMK-R1 key from the R0KH that the STA used during the Initial Mobility Domain Association.'));
+					o.depends({ ieee80211r: '1', ft_psk_generate_local: '' });
+					o.rmempty = true;
+
+					o = ss.taboption('roaming', form.DynamicList, 'r1kh', _('External R1 Key Holder List'), _('List of R1KHs in the same Mobility Domain. <br />Format: MAC-address,R1KH-ID as 6 octets with colons,128-bit key as hex string. <br />This list is used to map R1KH-ID to a destination MAC address when sending PMK-R1 key from the R0KH. This is also the list of authorized R1KHs in the MD that can request PMK-R1 keys.'));
+					o.depends({ ieee80211r: '1', ft_psk_generate_local: '' });
+					o.rmempty = true;
 				}
 
 				if (hwtype == 'mac80211') {

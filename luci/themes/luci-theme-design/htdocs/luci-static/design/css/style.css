@@ -1156,6 +1156,12 @@ fieldset > fieldset,
 	box-shadow: none;
 }
 
+/* Avoid clipping LuCI dropdown popups inside nested form sections. */
+fieldset,
+fieldset.cbi-section {
+	overflow-y: visible;
+}
+
 .cbi-section > h3:first-child,
 .panel-title {
     width: 100%;
@@ -1934,9 +1940,11 @@ form.inline + form.inline,
 	top: calc(100% + 4px);
 	left: 0;
 	z-index: 1200;
+	display: block;
 	min-width: 100%;
 	padding: 0.25rem 0;
 	max-height: 200px;
+	overflow-x: hidden;
 	overflow-y: auto;
 	background: var(--sectionbg_color);
 	border: var(--input_border);
@@ -1955,6 +1963,7 @@ form.inline + form.inline,
 	position: relative;
 	z-index: 1;
 	display: flex;
+	width: 100%;
 	background: var(--sectionbg_color);
 	min-height: 2.5rem;
 	padding: 0 0.85rem;
@@ -2002,6 +2011,21 @@ td.cbi-value-field.cbi-dropdown-open,
 	position: relative;
 	overflow: visible !important;
 	z-index: 100;
+}
+
+/* Keep opened dropdowns inside modal flow so menus don't get clipped or spill
+ * outside the dialog frame. */
+body.modal-overlay-active #modal_overlay .modal.cbi-modal .cbi-value-field.cbi-dropdown-open {
+	position: relative;
+	overflow: visible !important;
+	margin-bottom: min(18rem, 50vh);
+	z-index: 120;
+}
+
+body.modal-overlay-active #modal_overlay .modal.cbi-modal [data-tab-active="true"],
+body.modal-overlay-active #modal_overlay .modal.cbi-modal .cbi-section-node,
+body.modal-overlay-active #modal_overlay .modal.cbi-modal .cbi-section-node-tabbed {
+	overflow: visible !important;
 }
 
 .cbi-section,
@@ -2389,11 +2413,14 @@ td > .ifacebadge,
 #syslog {
     width: 100%;
     min-height: 15rem;
-    padding: 10px;
+    padding: 16px 18px;
     margin-bottom: 20px;
     border-radius: 0;
     background-color: var(--sectionbg_color);
     border: none;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 16px !important;
+    line-height: 1.85 !important;
 }
 
 #syslog:focus {
