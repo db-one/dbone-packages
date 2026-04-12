@@ -18,6 +18,132 @@ var callIwinfoAssoclistCompat = rpc.declare({
 	params: [ 'device' ],
 	expect: { results: [] }
 });
+var callIwinfoTxPowerListCompat = rpc.declare({
+	object: 'iwinfo',
+	method: 'txpowerlist',
+	params: [ 'device' ],
+	expect: { results: [] }
+});
+var cachedRuntimeTxPowerMap = null;
+var cachedRuntimeTxPowerPromise = null;
+var cachedTxPowerListMaxMap = null;
+var cachedTxPowerListMaxPromise = null;
+
+function parseRuntimeTxPowerMap(stdout) {
+	var lines = String(stdout || '').split(/\n/),
+	    ifaces = {},
+	    iface = null,
+	    m, name;
+
+	for (var i = 0; i < lines.length; i++) {
+		if ((m = lines[i].match(/^\s*Interface\s+(\S+)/))) {
+			iface = { name: m[1] };
+			ifaces[iface.name] = iface;
+			continue;
+		}
+
+		if (!iface)
+			continue;
+
+		if ((m = lines[i].match(/^\s*wiphy\s+(\d+)/)))
+			iface.wiphy = +m[1];
+		else if ((m = lines[i].match(/^\s*addr\s+([0-9a-f:]+)/i)))
+			iface.addr = m[1].toUpperCase();
+		else if ((m = lines[i].match(/^\s*txpower\s+([0-9]+(?:\.[0-9]+)?)/i)))
+			iface.txpower = Math.round(parseFloat(m[1]));
+	}
+
+	var txpowerMap = {};
+
+	for (name in ifaces) {
+		iface = ifaces[name];
+
+		if (iface.txpower != null) {
+			txpowerMap[name] = iface.txpower;
+			continue;
+		}
+
+		var fallback = null;
+
+		for (var peerName in ifaces) {
+			var peer = ifaces[peerName];
+
+			if (peerName == name || peer.txpower == null)
+				continue;
+
+			if (iface.wiphy != null && peer.wiphy === iface.wiphy) {
+				if (iface.addr && peer.addr && iface.addr === peer.addr) {
+					fallback = peer.txpower;
+					break;
+				}
+
+				if (fallback == null)
+					fallback = peer.txpower;
+			}
+			else if (fallback == null && iface.addr && peer.addr && iface.addr === peer.addr) {
+				fallback = peer.txpower;
+			}
+		}
+
+		if (fallback != null)
+			txpowerMap[name] = fallback;
+	}
+
+	return txpowerMap;
+}
+
+function loadRuntimeTxPowerMap() {
+	if (cachedRuntimeTxPowerMap != null)
+		return Promise.resolve(cachedRuntimeTxPowerMap);
+
+	if (cachedRuntimeTxPowerPromise != null)
+		return cachedRuntimeTxPowerPromise;
+
+	cachedRuntimeTxPowerPromise = L.resolveDefault(fs.exec_direct('/usr/sbin/iw', [ 'dev' ]), '').then(function(stdout) {
+		cachedRuntimeTxPowerMap = parseRuntimeTxPowerMap(stdout);
+		return cachedRuntimeTxPowerMap;
+	}).catch(function() {
+		cachedRuntimeTxPowerMap = {};
+		return cachedRuntimeTxPowerMap;
+	});
+
+	return cachedRuntimeTxPowerPromise;
+}
+
+function loadTxPowerListMaxMap() {
+	if (cachedTxPowerListMaxMap != null)
+		return Promise.resolve(cachedTxPowerListMaxMap);
+
+	if (cachedTxPowerListMaxPromise != null)
+		return cachedTxPowerListMaxPromise;
+
+	var radios = uci.sections('wireless', 'wifi-device').map(function(s) { return s['.name']; });
+
+	cachedTxPowerListMaxPromise = Promise.all(radios.map(function(name) {
+		return L.resolveDefault(callIwinfoTxPowerListCompat(name), []).then(function(list) {
+			var max = null;
+
+			for (var i = 0; i < list.length; i++)
+				if (list[i] && typeof(list[i].dbm) == 'number')
+					max = (max == null) ? list[i].dbm : Math.max(max, list[i].dbm);
+
+			return [ name, max ];
+		});
+	})).then(function(entries) {
+		cachedTxPowerListMaxMap = {};
+
+		for (var i = 0; i < entries.length; i++)
+			if (entries[i][1] != null)
+				cachedTxPowerListMaxMap[entries[i][0]] = entries[i][1];
+
+		return cachedTxPowerListMaxMap;
+	}).catch(function() {
+		cachedTxPowerListMaxMap = {};
+		return cachedTxPowerListMaxMap;
+	});
+
+	return cachedTxPowerListMaxPromise;
+}
 
 function count_changes(section_id) {
 	var changes = ui.changes.changes, n = 0;
@@ -134,13 +260,56 @@ function formatConfigEncryption(enc) {
 	return enc;
 }
 
+function getConfigEncryptionValue(section_id, hwtype) {
+	var enc = String(uci.get('wireless', section_id, 'encryption') || ''),
+	    sae = uci.get('wireless', section_id, 'sae');
+
+	if (enc == 'wep')
+		return 'wep-open';
+
+	if (isQcaWifiHwtype(hwtype) && sae == '1') {
+		if (enc == 'psk2' || enc.indexOf('psk2+') == 0)
+			return 'sae-mixed';
+
+		if (enc == 'sae' || enc.indexOf('sae+') == 0)
+			return 'sae';
+	}
+
+	if (enc.match(/\+/))
+		return enc.replace(/\+.+$/, '');
+
+	return enc;
+}
+
+function getConfigCipherValue(section_id, hwtype) {
+	var enc = String(uci.get('wireless', section_id, 'encryption') || ''),
+	    sae = uci.get('wireless', section_id, 'sae'),
+	    value = enc;
+
+	if (!enc.match(/\+/))
+		return ((isQcaWifiHwtype(hwtype) && sae == '1' && (enc == 'psk2' || enc == 'sae')) ||
+			enc == 'sae' || enc == 'sae-mixed') ? 'ccmp' : enc;
+
+	value = enc.replace(/^[^+]+\+/, '');
+
+	if (value == 'aes')
+		value = 'ccmp';
+	else if (value == 'tkip+aes' || value == 'aes+tkip' || value == 'ccmp+tkip')
+		value = 'tkip+ccmp';
+
+	return value;
+}
+
 function getDisplayEncryption(radioNet) {
 	var encryption = radioNet.getActiveEncryption();
 
 	if (encryption && encryption != '-')
 		return encryption;
 
-	return formatConfigEncryption(uci.get('wireless', radioNet.getName(), 'encryption'));
+	return formatConfigEncryption(getConfigEncryptionValue(
+		radioNet.getName(),
+		uci.get('wireless', radioNet.getWifiDeviceName(), 'type')
+	));
 }
 
 function getDisplayBSSID(radioNet) {
@@ -163,15 +332,51 @@ function getFtIdentifier(radioNet) {
 	return String(bssid).replace(/:/g, '').toUpperCase();
 }
 
+function getConfiguredTxPower(radioNet) {
+	var cfgvalue = +uci.get('wireless', radioNet.getWifiDeviceName(), 'txpower');
+
+	return (!isNaN(cfgvalue) && cfgvalue > 0) ? cfgvalue : null;
+}
+
 function getDisplayTxPower(radioNet) {
-	var txpower = radioNet.getTXPower();
+	var hwtype = uci.get('wireless', radioNet.getWifiDeviceName(), 'type'),
+	    txpower = radioNet.getTXPower(),
+	    cfgvalue = getConfiguredTxPower(radioNet),
+	    maxpower = cachedTxPowerListMaxMap ? cachedTxPowerListMaxMap[radioNet.getWifiDeviceName()] : null;
+
+	if (isQcaWifiHwtype(hwtype)) {
+		if (cfgvalue != null)
+			return (maxpower != null) ? Math.min(cfgvalue, maxpower) : cfgvalue;
+
+		if (maxpower != null && maxpower > 0)
+			return maxpower;
+	}
 
 	if (txpower != null && txpower > 0)
 		return txpower;
 
-	txpower = +uci.get('wireless', radioNet.getWifiDeviceName(), 'txpower');
+	if (!isNaN(cfgvalue))
+		return cfgvalue;
 
-	return isNaN(txpower) ? null : txpower;
+	txpower = cachedRuntimeTxPowerMap ? cachedRuntimeTxPowerMap[radioNet.getWifiDeviceName()] : null;
+
+	return (txpower != null && txpower > 0) ? txpower : null;
+}
+
+function getDisplayTxPowerLimit(radioNet) {
+	var hwtype = uci.get('wireless', radioNet.getWifiDeviceName(), 'type'),
+	    maxpower = cachedTxPowerListMaxMap ? cachedTxPowerListMaxMap[radioNet.getWifiDeviceName()] : null;
+
+	if (isQcaWifiHwtype(hwtype))
+		return (maxpower != null && maxpower > 0) ? maxpower : null;
+
+	return getDisplayTxPower(radioNet);
+}
+
+function getDisplayTxPowerLabel(radioNet) {
+	var hwtype = uci.get('wireless', radioNet.getWifiDeviceName(), 'type');
+
+	return isQcaWifiHwtype(hwtype) ? _('Power limit') : _('Tx-Power');
 }
 
 function getDisplayChannel(radioNet) {
@@ -486,11 +691,32 @@ function getDisplayNoiseValue(radioNet, hwtype, is_assoc) {
 	return radioNet.getNoise();
 }
 
+function renderStatusRow(pairs, className) {
+	var row = E('div', { 'class': className }),
+	    added = 0;
+
+	for (var i = 0; i < pairs.length; i++) {
+		var label = pairs[i][0],
+		    value = pairs[i][1];
+
+		if (value == null)
+			continue;
+
+		if (added++)
+			row.appendChild(E('span', { 'class': 'wireless-status-sep' }, ' | '));
+
+		row.appendChild(E('span', { 'class': 'nowrap' }, [
+			E('strong', '%s: '.format(label)),
+			value
+		]));
+	}
+
+	return added ? row : null;
+}
+
 function render_radio_badge(radioDev, wifiNets) {
-	return E('span', { 'class': 'ifacebadge' }, [
-		E('img', { 'src': L.resource('icons/wifi%s.png').format(isRadioDisplayUp(radioDev, wifiNets || []) ? '' : '_disabled') }),
-		' ',
-		radioDev.getName()
+	return E('div', { 'class': 'wireless-radio-badge' }, [
+		E('img', { 'src': L.resource('icons/wifi%s.png').format(isRadioDisplayUp(radioDev, wifiNets || []) ? '' : '_disabled') })
 	]);
 }
 
@@ -583,8 +809,8 @@ function render_network_badge(radioNet) {
 
 function render_radio_status(radioDev, wifiNets) {
 	var name = getRadioDisplayName(radioDev),
-	    node = E('div', [ E('big', {}, E('strong', {}, name)), E('div') ]),
-	    channel, frequency, bitrate;
+	    channel, frequency, bitrate,
+	    meta;
 
 	for (var i = 0; i < wifiNets.length; i++) {
 		channel   = channel   || getDisplayChannel(wifiNets[i]);
@@ -593,14 +819,17 @@ function render_radio_status(radioDev, wifiNets) {
 	}
 
 	if (isRadioDisplayUp(radioDev, wifiNets))
-		L.itemlist(node.lastElementChild, [
-			_('Channel'), '%s (%s %s)'.format(channel || '?', frequency || '?', _('GHz')),
-			_('Bitrate'), '%s %s'.format(bitrate || '?', _('Mbit/s'))
-		], ' | ');
+		meta = renderStatusRow([
+			[ _('Channel'), '%s (%s %s)'.format(channel || '?', frequency || '?', _('GHz')) ],
+			[ _('Bitrate'), '%s %s'.format(bitrate || '?', _('Mbit/s')) ]
+		], 'wireless-radio-meta');
 	else
-		node.lastElementChild.appendChild(E('em', _('Device is not active')));
+		meta = E('div', { 'class': 'wireless-radio-meta' }, E('em', _('Device is not active')));
 
-	return node;
+	return E('div', { 'class': 'wireless-radio-status' }, [
+		E('div', { 'class': 'wireless-radio-title' }, name),
+		meta
+	]);
 }
 
 function render_network_status(radioNet) {
@@ -622,13 +851,21 @@ function render_network_status(radioNet) {
 	else if (!is_assoc)
 		status_text = E('em', disabled ? _('Wireless is disabled') : _('Wireless is not associated'));
 
-	return L.itemlist(E('div'), [
-		is_mesh ? _('Mesh ID') : _('SSID'), (is_mesh ? radioNet.getMeshID() : radioNet.getSSID()) || '?',
-		_('Mode'),       mode,
-		_('BSSID'),      (!changecount && is_assoc) ? bssid : null,
-		_('Encryption'), (!changecount && is_assoc) ? getDisplayEncryption(radioNet) : null,
-		null,            status_text
-	], [ ' | ', E('br') ]);
+	var rows = [
+		renderStatusRow([
+			[ is_mesh ? _('Mesh ID') : _('SSID'), (is_mesh ? radioNet.getMeshID() : radioNet.getSSID()) || '?' ],
+			[ _('Mode'), mode ]
+		], 'wireless-network-status-row'),
+		renderStatusRow([
+			[ _('BSSID'), (!changecount && is_assoc) ? bssid : null ],
+			[ _('Encryption'), (!changecount && is_assoc) ? getDisplayEncryption(radioNet) : null ]
+		], 'wireless-network-status-row')
+	];
+
+	if (status_text)
+		rows.push(E('div', { 'class': 'wireless-network-status-row wireless-network-status-note' }, status_text));
+
+	return E('div', { 'class': 'wireless-network-status' }, rows.filter(function(row) { return row != null; }));
 }
 
 function render_modal_status(node, radioNet) {
@@ -657,7 +894,7 @@ function render_modal_status(node, radioNet) {
 		_('BSSID'),      is_assoc ? bssid : null,
 		_('Encryption'), is_assoc ? getDisplayEncryption(radioNet) : null,
 		_('Channel'),    is_assoc ? '%d (%s %s)'.format(channel, frequency || '?', _('GHz')) : null,
-		_('Tx-Power'),   (is_assoc && txpower != null) ? '%d %s'.format(txpower, _('dBm')) : null,
+		getDisplayTxPowerLabel(radioNet), (is_assoc && txpower != null) ? '%d %s'.format(txpower, _('dBm')) : null,
 		_('Signal'),     (is_assoc && noise != null) ? '%d %s'.format(radioNet.getSignal(), _('dBm')) : null,
 		_('Noise'),      (is_assoc && noise != null) ? '%d %s'.format(noise, _('dBm')) : null,
 		_('Bitrate'),    (is_assoc && bitrate != null) ? '%.1f %s'.format(bitrate, _('Mbit/s')) : null,
@@ -1256,9 +1493,16 @@ var CBIWifiTxPowerValue = form.ListValue.extend({
 	}),
 
 	load: function(section_id) {
-		return this.callTxPowerList(section_id).then(L.bind(function(pwrlist) {
-			this.powerval = this.wifiNetwork ? getDisplayTxPower(this.wifiNetwork) : null;
+		return Promise.all([
+			this.callTxPowerList(section_id),
+			loadRuntimeTxPowerMap()
+		]).then(L.bind(function(res) {
+			var pwrlist = res[0],
+			    hwtype = this.wifiNetwork ? uci.get('wireless', this.wifiNetwork.getWifiDeviceName(), 'type') : null;
+
+			this.powerval = this.wifiNetwork ? getDisplayTxPowerLimit(this.wifiNetwork) : null;
 			this.poweroff = this.wifiNetwork ? this.wifiNetwork.getTXPowerOffset() : null;
+			this.powerlabel = isQcaWifiHwtype(hwtype) ? _('Current limit') : _('Current power');
 
 			if (this.powerval == null)
 				for (var i = 0; i < pwrlist.length; i++)
@@ -1281,7 +1525,7 @@ var CBIWifiTxPowerValue = form.ListValue.extend({
 		    widget.firstElementChild.style.width = 'auto';
 
 		dom.append(widget, E('span', [
-			' - ', _('Current power'), ': ',
+			' - ', this.powerlabel || _('Current power'), ': ',
 			E('span', [ this.powerval != null ? '%d dBm'.format(this.powerval) : E('em', _('unknown')) ]),
 			this.poweroff ? ' + %d dB offset = %s dBm'.format(this.poweroff, this.powerval != null ? this.powerval + this.poweroff : '?') : ''
 		]));
@@ -1437,7 +1681,12 @@ return view.extend({
 			uci.changes(),
 			uci.load('wireless'),
 			uci.load('system')
-		]);
+		]).then(function() {
+			return Promise.all([
+				loadRuntimeTxPowerMap(),
+				loadTxPowerListMaxMap()
+			]);
+		});
 	},
 
 	checkAnonymousSections: function() {
@@ -2182,25 +2431,38 @@ return view.extend({
 				o.depends('mode', 'mesh');
 
 				o.cfgvalue = function(section_id) {
-					var v = String(uci.get('wireless', section_id, 'encryption'));
-					if (v == 'wep')
-						return 'wep-open';
-					else if (v.match(/\+/))
-						return v.replace(/\+.+$/, '');
-					return v;
+					return getConfigEncryptionValue(section_id, hwtype);
 				};
 
 				o.write = function(section_id, value) {
 					var e = this.section.children.filter(function(o) { return o.option == 'encryption' })[0].formvalue(section_id),
-					    co = this.section.children.filter(function(o) { return o.option == 'cipher' })[0], c = co.formvalue(section_id);
+					    co = this.section.children.filter(function(o) { return o.option == 'cipher' })[0],
+					    c = co.formvalue(section_id),
+					    stored_e = e;
 
 					if (value == 'wpa' || value == 'wpa2' || value == 'wpa3' || value == 'wpa3-mixed')
 						uci.unset('wireless', section_id, 'key');
 
-					if (co.isActive(section_id) && e && (c == 'tkip' || c == 'ccmp' || c == 'tkip+ccmp'))
-						e += '+' + c;
+					if ((e == 'sae' || e == 'sae-mixed') && (!c || c == 'auto'))
+						c = 'ccmp';
 
-					uci.set('wireless', section_id, 'encryption', e);
+					if (isQcaWifiHwtype(hwtype)) {
+						if (e == 'sae-mixed') {
+							stored_e = 'psk2';
+							uci.set('wireless', section_id, 'sae', '1');
+						}
+						else if (e == 'sae') {
+							uci.set('wireless', section_id, 'sae', '1');
+						}
+						else {
+							uci.unset('wireless', section_id, 'sae');
+						}
+					}
+
+					if (co.isActive(section_id) && stored_e && (c == 'tkip' || c == 'ccmp' || c == 'tkip+ccmp' || c == 'gcmp'))
+						stored_e += '+' + c;
+
+					uci.set('wireless', section_id, 'encryption', stored_e);
 				};
 
 				o = ss.taboption('encryption', form.ListValue, 'cipher', _('Cipher'));
@@ -2208,6 +2470,8 @@ return view.extend({
 				o.depends('encryption', 'wpa2');
 				o.depends('encryption', 'wpa3');
 				o.depends('encryption', 'wpa3-mixed');
+				o.depends('encryption', 'sae');
+				o.depends('encryption', 'sae-mixed');
 				o.depends('encryption', 'psk2');
 				o.depends('encryption', 'wpa-mixed');
 				o.depends('encryption', 'psk-mixed');
@@ -2215,20 +2479,14 @@ return view.extend({
 					o.depends('encryption', 'psk');
 				o.value('auto', _('auto'));
 				o.value('ccmp', _('Force CCMP (AES)'));
+				if (isQcaWifiHwtype(hwtype))
+					o.value('gcmp', _('Force GCMP'));
 				o.value('tkip', _('Force TKIP'));
 				o.value('tkip+ccmp', _('Force TKIP and CCMP (AES)'));
 				o.write = ss.children.filter(function(o) { return o.option == 'encryption' })[0].write;
 
 				o.cfgvalue = function(section_id) {
-					var v = String(uci.get('wireless', section_id, 'encryption'));
-					if (v.match(/\+/)) {
-						v = v.replace(/^[^+]+\+/, '');
-						if (v == 'aes')
-							v = 'ccmp';
-						else if (v == 'tkip+aes' || v == 'aes+tkip' || v == 'ccmp+tkip')
-							v = 'tkip+ccmp';
-					}
-					return v;
+					return getConfigCipherValue(section_id, hwtype);
 				};
 
 
