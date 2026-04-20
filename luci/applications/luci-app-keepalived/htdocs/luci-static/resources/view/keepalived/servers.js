@@ -4,15 +4,15 @@
 'require uci';
 
 return view.extend({
-	load: function() {
+	load() {
 		return Promise.all([
 			uci.load('keepalived'),
 		]);
 	},
 
-	renderVirtualServer: function(m) {
-		var s, o;
-		var real_servers;
+	renderVirtualServer(m) {
+		let s, o;
+		let real_servers;
 
 		s = m.section(form.GridSection, 'virtual_server', _('Virtual Server'),
 			_('A virtual server is a service configured to listen ' +
@@ -112,16 +112,16 @@ return view.extend({
 		o.datatype = 'uinteger';
 		o.modalonly = true;
 
-		o = s.taboption('advanced', form.Value, 'fail', _('Fail'),
+		o = s.taboption('advanced', form.Value, 'fall', _('Fall'),
 			_('Required number of successes for KO transition'));
 		o.optional = true;
 		o.datatype = 'uinteger';
 		o.modalonly = true;
 	},
 
-	renderRealServer: function(m) {
-		var s, o;
-		var urls;
+	renderRealServer(m) {
+		let s, o;
+		let urls;
 
 		s = m.section(form.GridSection, 'real_server', _('Real Servers'),
 			_('Real Server to redirect all request'));
@@ -179,7 +179,7 @@ return view.extend({
 		urls = uci.sections('keepalived', 'url');
 		o = s.option(form.DynamicList, 'url', _('URLs'));
 		if (urls != '') {
-			for (var i = 0; i < urls.length; i++) {
+			for (let i = 0; i < urls.length; i++) {
 				o.value(urls[i].name);
 			}
 		}
@@ -193,8 +193,8 @@ return view.extend({
 		o.datatype = 'uinteger';
 	},
 
-	render: function() {
-		var m;
+	render() {
+		let m;
 
 		m = new form.Map('keepalived');
 

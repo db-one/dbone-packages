@@ -3,18 +3,47 @@
 
 'use strict';
 
-import { stdin, access, dirname, basename, open, popen, glob, lsdir, readfile, readlink, error } from 'fs';
+import { stdin, access, dirname, basename, open, popen, glob, lsdir, readfile, readlink, realpath, error } from 'fs';
 import { cursor } from 'uci';
 
 import { init_list, init_index, init_enabled, init_action, conntrack_list, process_list } from 'luci.sys';
 import { revision, branch } from 'luci.version';
 import { statvfs, uname } from 'luci.core';
+import { connect } from 'ubus';
 
 import timezones from 'luci.zoneinfo';
 
 
 function shellquote(s) {
 	return `'${replace(s, "'", "'\\''")}'`;
+}
+
+function callPackageVersionCheck(pkg) {
+	let version = "";
+
+	if ( access('/bin/opkg') ) {
+		// <= v24.10
+		let fd = popen('opkg list-installed ' + shellquote(pkg) + ' 2>/dev/null');
+		if (fd) {
+			const re = regexp('^' + pkg + ' - (.+)$', 's');
+			const m = match(fd.read('all'), re);
+			version = m?.[1];
+
+			fd.close();
+		}
+	}
+	else if ( access('/usr/bin/apk') ) {
+		// > v24.10
+		let fd = popen('apk list -I ' + shellquote(pkg) + ' 2>/dev/null');
+		if (fd) {
+			const re = regexp('^' + pkg + '-(.+)$', 's');
+			const m = match(fd.read('all'), re);
+			version = m?.[1];
+
+			fd.close();
+		}
+	}
+	return version;
 }
 
 const methods = {
@@ -48,6 +77,7 @@ const methods = {
 		call: function(request) {
 			switch (request.args.action) {
 			case 'enable':
+			case 'enabled':
 			case 'disable':
 			case 'start':
 			case 'stop':
@@ -66,8 +96,9 @@ const methods = {
 		}
 	},
 
-	getLocaltime: {
+	getUnixtime: {
 		call: function(request) {
+			// time() ; Returns the current UNIX epoch.
 			return { result: time() };
 		}
 	},
@@ -196,20 +227,41 @@ const methods = {
 				firewall:   access('/sbin/fw3') == true,
 				firewall4:  access('/sbin/fw4') == true,
 				opkg:       access('/bin/opkg') == true,
+				bonding:    access('/sys/module/bonding'),
+				mii_tool:   access('/usr/sbin/mii-tool'),
 				offloading: access('/sys/module/xt_FLOWOFFLOAD/refcnt') == true || access('/sys/module/nft_flow_offload/refcnt') == true,
 				fullcone:   access('/sys/module/xt_FULLCONENAT/refcnt') == true || access('/sys/module/nft_fullcone/refcnt') == true,
 				br2684ctl:  access('/usr/sbin/br2684ctl') == true,
 				swconfig:   access('/sbin/swconfig') == true,
-				odhcpd:     access('/usr/sbin/odhcpd') == true,
 				zram:       access('/sys/class/zram-control') == true,
 				sysntpd:    readlink('/usr/sbin/ntpd') != null,
 				ipv6:       access('/proc/net/ipv6_route') == true,
 				dropbear:   access('/usr/sbin/dropbear') == true,
 				cabundle:   access('/etc/ssl/certs/ca-certificates.crt') == true,
 				relayd:     access('/usr/sbin/relayd') == true,
+				apk:        access('/usr/bin/apk') == true,
+				wifi:       access('/sbin/wifi') == true,
+				ufpd:       access('/usr/sbin/ufpd') == true,
+				vrf:        access('/sys/module/vrf/refcnt') == true, // vrf.ko is loaded
+				netifd_vrf: false,
+				mptcp:      access('/proc/sys/net/mptcp/enabled'),
 			};
 
-			const wifi_features = [ 'eap', '11ac', '11ax', '11be', '11r', 'acs', 'sae', 'owe', 'suiteb192', 'wep', 'wps' ];
+			const wifi_features = [ 
+				'11ac',
+				'11ax',
+				'11be',
+				'11r',
+				'acs',
+				'eap',
+				'mesh',
+				'ocv',
+				'owe',
+				'sae',
+				'suiteb192',
+				'wep',
+				'wps',
+			];
 
 			if (access('/usr/sbin/hostapd')) {
 				result.hostapd = { cli: access('/usr/sbin/hostapd_cli') == true };
@@ -239,6 +291,28 @@ const methods = {
 
 				fd.close();
 			}
+
+			result.odhcpd = false;
+			fd = popen('odhcpd -h 2>/dev/null');
+
+			if (fd) {
+				const output = fd.read('all');
+
+				if (output) {
+					result.odhcpd = {};
+					const m = match(output, /^Features: (.+)$/s);
+
+					for (let opt in split(m?.[1], ' ')) {
+						let f = replace(opt, 'no-', '', 1);
+						result.odhcpd[lc(f)] = (f == opt);
+					}
+				}
+
+				fd.close();
+			}
+
+			// This check can be removed after v25 release
+			result.netifd_vrf = match(callPackageVersionCheck('netifd'), /^20[0-9][0-9]/s)?.[0] >= 2025;
 
 			fd = popen('ipset --help 2>/dev/null');
 
@@ -486,8 +560,8 @@ const methods = {
 
 				for (let line = fd.read('line'); length(line); line = fd.read('line')) {
 					const m = split(line, ' ');
-					const device = replace(m[0], /\\([0-9][0-9][0-9])/g, (m, n) => char(int(n, 8)));
-					const mount  = replace(m[1], /\\([0-9][0-9][0-9])/g, (m, n) => char(int(n, 8)));
+					const device = replace(m[0], /\\([0-9][0-9][0-9])/g, (m, n) => chr(int(n, 8)));
+					const mount  = replace(m[1], /\\([0-9][0-9][0-9])/g, (m, n) => chr(int(n, 8)));
 					const stat = statvfs(mount);
 
 					if (stat?.blocks > 0) {
@@ -509,6 +583,7 @@ const methods = {
 			}
 		}
 	},
+
 	getRealtimeStats: {
 		args: { mode: 'interface', device: 'eth0' },
 		call: function(request) {
@@ -559,53 +634,76 @@ const methods = {
 
 	getBuiltinEthernetPorts: {
 		call: function() {
-			let fd = open('/etc/board.json', 'r');
-			let board = fd ? json(fd) : {};
+			const ubus = connect();
+			const sysboard = ubus.call('system', 'board');
 			let ports = [];
 
-			for (let k in [ 'lan', 'wan' ]) {
-				if (!board?.network?.[k])
-					continue;
+			if (
+				(type(sysboard) !== 'object') ||
+				match(sysboard.release.target, /^(armsr|bcm27xx|mvebu|rockchip|sifiveu|sunxi|x86)/)
+			) {
+				const stat = ubus.call('network.device', 'status') || {};
+				map(keys(stat), (ifname) => {
+					if (
+						ifname &&
+						stat[ifname]?.devtype in ['ethernet', 'dsa'] && (
+							length(stat[ifname]['link-advertising']) ||
+							match(ifname, /^eth\d+$/)
+						)
+					)
+						push(ports, { role: 'unknown', device: ifname });
+				});
+			} else {
+				const fd = open('/etc/board.json', 'r');
+				const board = fd ? json(fd) : {};
+				for (let k in [ 'lan', 'wan' ]) {
+					if (!board?.network?.[k])
+						continue;
 
-				if (type(board.network[k].ports) == 'array') {
-					for (let ifname in board.network[k].ports) {
-						push(ports, { role: k, device: ifname });
+					if (type(board.network[k].ports) == 'array') {
+						for (let ifname in board.network[k].ports)
+							push(ports, { role: k, device: ifname });
+					} else if (type(board.network[k].device) == 'string') {
+						push(ports, { role: k, device: board.network[k].device });
 					}
-				}
-				else if (type(board.network[k].device) == 'string') {
-					push(ports, { role: k, device: board.network[k].device });
-				}
-			}
-
-			/* Workaround for targets that do not enumerate  all netdevs in board.json */
-			if (uname().machine in [ 'x86_64' ] &&
-			    match(ports[0]?.device, /^eth\d+$/)) {
-				let bus = readlink(`/sys/class/net/${ports[0].device}/device/subsystem`);
-
-				for (let netdev in lsdir('/sys/class/net')) {
-					if (!match(netdev, /^eth\d+$/))
-						continue;
-
-					if (length(filter(ports, port => port.device == netdev)))
-						continue;
-
-					if (readlink(`/sys/class/net/${netdev}/device/subsystem`) != bus)
-						continue;
-
-					push(ports, { role: 'unknown', device: netdev });
 				}
 			}
 
 			return { result: ports };
 		}
 	},
-	
+
+	getOdhcp6cStats: {
+		call: function() {
+			const ubus = connect();
+			const devs = ubus.call('network.device', 'status');
+
+			if (!devs)
+				return false;
+
+			const dev_stats = {};
+
+			for (let dev in devs) {
+				const m = ubus.call(`odhcp6c.${dev}`, 'get_statistics');
+
+				// not all interfaces are exposed unless odhcp6c runs on it
+				if (!m)
+					continue;
+
+				push(dev_stats, dev);
+				dev_stats[dev] = m;
+			}
+
+			return { result: dev_stats };
+		}
+	},
+
 	getCPUBench: {
 		call: function() {
 			return { cpubench: readfile('/etc/bench.log') || '' };
 		}
 	},
-	
+
 	getCPUInfo: {
 		call: function() {
 			if (!access('/sbin/cpuinfo'))
@@ -624,26 +722,28 @@ const methods = {
 			}
 		}
 	},
-	
+
 	getCPUUsage: {
 		call: function() {
 			if (access('/sbin/usage')) {
-        const fd = popen('/sbin/usage');
-				let cpuusage = fd.read('all');
-				if (!cpuusage)
-					cpuusage = '?';
-				fd.close();
+				const fd = popen('/sbin/usage');
+				if (fd) {
+					let cpuusage = trim(fd.read('all'));
+					fd.close();
 
-				return { cpuusage: cpuusage };
-			} else {
-        const fd = popen('top -n1 | awk \'/^CPU/ {printf("%d%", 100 - $8)}\'');
-				let cpuusage = fd.read('all');
-				if (!cpuusage)
-					cpuusage = '?';
-				fd.close();
-
-				return { cpuusage: cpuusage };
+					if (length(cpuusage))
+						return { cpuusage };
+				}
 			}
+
+			const fd = popen('top -n1 | awk \'/^CPU/ {printf("%d%", 100 - $8)}\'');
+			if (!fd)
+				return { cpuusage: error() };
+
+			let cpuusage = trim(fd.read('all')) || '?';
+			fd.close();
+
+			return { cpuusage };
 		}
 	},
 
@@ -665,7 +765,7 @@ const methods = {
 			}
 		}
 	},
-	
+
 	getOnlineUsers: {
 		call: function() {
 			const fd = open('/proc/net/arp', 'r');
@@ -683,7 +783,7 @@ const methods = {
 				return { onlineusers: error() };
 			}
 		}
-	}				
+	}
 };
 
 return { luci: methods };

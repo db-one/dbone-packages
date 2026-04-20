@@ -6,8 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for VSFTPD
-LUCI_DEPENDS:=+vsftpd-alt
-LUCI_PKGARCH:=all
+LUCI_DEPENDS:=+luci-compat +vsftpd
 
 include ../../luci.mk
 

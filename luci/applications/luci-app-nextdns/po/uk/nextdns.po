@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-02-18 20:52+0000\n"
-"Last-Translator: Єгор Филенко <efilenko74@gmail.com>\n"
+"PO-Revision-Date: 2025-10-30 16:57+0000\n"
+"Last-Translator: Максим Горпиніч <gorpinicmaksim0@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsnextdns/uk/>\n"
 "Language: uk\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.4\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.14.1-dev\n"
 
 #: applications/luci-app-nextdns/htdocs/luci-static/resources/view/nextdns/overview.js:23
 msgid "Configuration ID"
@@ -33,6 +33,8 @@ msgid ""
 "For further information, go to <a href=\"https://nextdns.io\" "
 "target=\"_blank\">nextdns.io</a>."
 msgstr ""
+"Щоб отримати додаткову інформацію, перейдіть на сторінку <a href=\"https://"
+"nextdns.io\" target=\"_blank\">nextdns.io</a>."
 
 #: applications/luci-app-nextdns/htdocs/luci-static/resources/view/nextdns/overview.js:15
 msgid "General"
@@ -48,24 +50,28 @@ msgstr "Надайте доступ до журналу зчитування з�
 
 #: applications/luci-app-nextdns/htdocs/luci-static/resources/view/nextdns/overview.js:33
 msgid "Log Queries"
-msgstr ""
+msgstr "Журнал запитів"
 
 #: applications/luci-app-nextdns/htdocs/luci-static/resources/view/nextdns/overview.js:34
 msgid "Log individual queries to system log."
-msgstr ""
+msgstr "Записувати окремі запити в системний журнал."
 
 #: applications/luci-app-nextdns/root/usr/share/luci/menu.d/luci-app-nextdns.json:24
 msgid "Logs"
-msgstr ""
+msgstr "Журнали"
 
 #: applications/luci-app-nextdns/htdocs/luci-static/resources/view/nextdns/overview.js:9
 #: applications/luci-app-nextdns/root/usr/share/luci/menu.d/luci-app-nextdns.json:3
 msgid "NextDNS"
-msgstr ""
+msgstr "Наступний DNS"
 
 #: applications/luci-app-nextdns/htdocs/luci-static/resources/view/nextdns/overview.js:10
 msgid "NextDNS Configuration."
-msgstr ""
+msgstr "Наступна конфігурація DNS."
+
+#: applications/luci-app-nextdns/htdocs/luci-static/resources/view/nextdns/logread.js:4
+msgid "NextDNS Log"
+msgstr "Журнал NextDNS"
 
 #: applications/luci-app-nextdns/root/usr/share/luci/menu.d/luci-app-nextdns.json:15
 msgid "Overview"
@@ -77,4 +83,4 @@ msgstr "Повідомити інформацію про клієнта"
 
 #: applications/luci-app-nextdns/htdocs/luci-static/resources/view/nextdns/overview.js:24
 msgid "The ID of your NextDNS configuration."
-msgstr ""
+msgstr "Ідентифікатор вашої конфігурації NextDNS."

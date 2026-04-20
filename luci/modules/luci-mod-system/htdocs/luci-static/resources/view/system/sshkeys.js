@@ -118,14 +118,14 @@ function renderKeyItem(pubkey) {
 		click: isReadonlyView ? null : removeKey,
 		'data-key': pubkey.src
 	}, [
-		E('strong', [ pubkey.comment || _('Unnamed key') ]), E('br'),
-		E('small', [
+		E('strong', {}, [ pubkey.comment || _('Unnamed key') ]), E('br'),
+		E('small', {}, [
 			'%s, %s'.format(pubkey.type, pubkey.curve || _('%d Bit').format(pubkey.bits)),
-			pubkey.options ? E([], [
+			pubkey.options ? E([], {}, [
 				' / ', _('Options:'), ' ',
-				E('code', Object.keys(pubkey.options).sort().join(', '))
+				E('code', {}, [Object.keys(pubkey.options).sort().join(', ')])
 			]) : '',
-			E('br'), E('code', pubkey.fprint)
+			E('br'), E('code', {}, [pubkey.fprint])
 		])
 	]);
 }
@@ -287,7 +287,7 @@ return view.extend({
 
 		return E('div', {}, [
 			E('h2', _('SSH-Keys')),
-			E('div', { 'class': 'cbi-section-descr' }, _('Public keys allow for the passwordless SSH logins with a higher security compared to the use of plain passwords. In order to upload a new key to the device, paste an OpenSSH compatible public key line or drag a <code>.pub</code> file into the input field.')),
+			E('div', { 'class': 'cbi-section-descr' }, _('Public keys allow for passwordless SSH logins with higher security than plain passwords. In order to upload a new key to the device, paste an OpenSSH-compatible public key or drag a <code>.pub</code> file into the input field.')),
 			E('div', { 'class': 'cbi-section-node' }, list)
 		]);
 	},

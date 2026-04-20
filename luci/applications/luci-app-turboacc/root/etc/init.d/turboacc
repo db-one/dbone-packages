@@ -4,8 +4,9 @@
 
 START=90
 STOP=10
+USE_PROCD=1
 
-start() {
+start_service() {
 	config_load "turboacc"
 
 	local fastpath
@@ -50,6 +51,9 @@ start() {
 	"shortcut_fe_cm")
 		lsmod |grep -q "shortcut_fe_cm" || modprobe "shortcut_fe_cm" 2>"/dev/null"
 		;;
+	"qca_nss_ecm")
+		[ -x "/etc/init.d/qca-nss-ecm" ] && /etc/init.d/qca-nss-ecm restart >/dev/null 2>&1
+		;;
 	"mediatek_hnat")
 		local fastpath_mh_eth_hnat fastpath_mh_eth_hnat_v6
 		config_get_bool fastpath_mh_eth_hnat "config" "fastpath_mh_eth_hnat" "1"
@@ -74,4 +78,13 @@ start() {
 
 	uci -q commit "firewall"
 	/etc/init.d/firewall restart >"/dev/null" 2>&1
+}
+
+reload_service() {
+	stop
+	start
+}
+
+service_triggers() {
+	procd_add_reload_trigger "turboacc"
 }

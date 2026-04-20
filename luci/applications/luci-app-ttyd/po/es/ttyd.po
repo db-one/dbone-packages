@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2019-10-17 14:50-0300\n"
-"PO-Revision-Date: 2024-02-05 02:27+0000\n"
-"Last-Translator: Franco Castillo <castillofrancodamian@gmail.com>\n"
+"PO-Revision-Date: 2026-03-28 19:26+0000\n"
+"Last-Translator: Francisco Serrador <fserrador@gmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsttyd/es/>\n"
 "Language: es\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.4-dev\n"
+"X-Generator: Weblate 5.17-dev\n"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:65
 msgid "Accept only one client and exit on disconnection"
@@ -26,16 +26,14 @@ msgid "Allow URL args"
 msgstr "Permitir argumentos de URL"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:49
-msgid ""
-"Allow client to send command line arguments in URL (eg: http://"
-"localhost:7681?arg=foo&arg=bar)"
+msgid "Allow client to send command line arguments in URL (eg: %s)"
 msgstr ""
 "Permitir que el cliente envíe argumentos de línea de comando en URL (por "
-"ejemplo: http://localhost:7681?Arg=foo&arg=bar)"
+"ejemplo: %s)"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:20
 msgid "Bind to UNIX domain socket instead of IP port"
-msgstr ""
+msgstr "Vincular al socket de dominio UNIX en lugar del puerto IP"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:59
 msgid "Check origin"
@@ -51,7 +49,7 @@ msgstr "Comando"
 
 #: applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json:23
 msgid "Config"
-msgstr "Configuración"
+msgstr "Config"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:37
 msgid "Credential"
@@ -67,7 +65,7 @@ msgstr "Ruta index.html personalizada"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:82
 msgid "Debug"
-msgstr "Depurar"
+msgstr "Depuración"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:51
 msgid "Do not allow clients to write to the TTY"
@@ -115,7 +113,7 @@ msgstr "Índice"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:86
 msgid "Info"
-msgstr "Info"
+msgstr "Informe"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:27
 msgid "Interface"
@@ -123,11 +121,11 @@ msgstr "Interfaz"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:94
 msgid "Make sure to set up another authorization method."
-msgstr ""
+msgstr "Asegúrese de configurar otro método de autorización."
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:61
 msgid "Max clients"
-msgstr "Máx. clientes"
+msgstr "Máximo de clientes"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:61
 msgid "Maximum clients to support (default: 0, no limit)"
@@ -135,11 +133,13 @@ msgstr "Máximo de clientes a admitir (predeterminado: 0, sin límite)"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:27
 msgid "Network interface to bind (eg: eth0)"
-msgstr ""
+msgstr "Interfaz de red para vincular (por ejemplo: eth0)"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:93
 msgid "Note that reverse proxied pages is NOT protected by password like LuCI."
 msgstr ""
+"Tenga en cuenta que las páginas con proxy inverso NO están protegidas por "
+"contraseña como LuCI."
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:85
 msgid "Notice"
@@ -151,7 +151,7 @@ msgstr "Una vez"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:92
 msgid "Override URL in Terminal tab. For use with reverse proxy."
-msgstr ""
+msgstr "Anular URL en la pestaña Terminal. Para usar con proxy inverso."
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:22
 msgid "Port"
@@ -234,19 +234,19 @@ msgstr "Tipo de terminal para informar (predeterminado: xterm-256color)"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:32
 msgid "UNIX domain socket path (eg: /var/run/ttyd.sock)"
-msgstr ""
+msgstr "Ruta del socket del dominio UNIX (por ejemplo: /var/run/ttyd.sock)"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:20
 msgid "UNIX socket"
-msgstr ""
+msgstr "Socket UNIX"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:32
 msgid "UNIX socket path"
-msgstr ""
+msgstr "Ruta del socket UNIX"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:91
 msgid "URL override"
-msgstr ""
+msgstr "Anulación de URL"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:40
 msgid "User ID"
@@ -258,7 +258,7 @@ msgstr "ID de usuario para ejecutar"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:84
 msgid "Warning"
-msgstr "Advertencia"
+msgstr "Aviso"
 
 #: applications/luci-app-ttyd/htdocs/luci-static/resources/view/ttyd/config.js:12
 msgid "ttyd Instance"

@@ -7,21 +7,21 @@ return network.registerProtocol('dhcpv6', {
 		return _('DHCPv6 client');
 	},
 
-	getOpkgPackage: function() {
+	getPackageName: function() {
 		return 'odhcp6c';
 	},
 
 	renderFormOptions: function(s) {
-		var o,
-		    reqprefixChoices = [ 'auto', 'no', '48', '52', '56', '60', '64' ];
+		var o;
 
 		o = s.taboption('general', form.ListValue, 'reqaddress', _('Request IPv6-address'));
-		o.value('try');
-		o.value('force');
-		o.value('none', 'disabled');
+		o.value('try', _('try', 'DHCPv6 address request mode'));
+		o.value('force', _('force', 'DHCPv6 address request mode'));
+		o.value('none', _('disabled', 'DHCPv6 address request mode'));
 		o.default = 'try';
-
-		o = s.taboption('general', form.ListValue, '_reqprefix_selector', _('Request IPv6-prefix of length'));
+		o = s.taboption('general', form.Value, 'reqprefix', _('Request IPv6-prefix'),
+			_('Either a prefix length hint (e.g. 56) only, whereby the operator selects the prefix, or specify a prefix also (e.g. %s)')
+			.format('<code>2001:db8::/56</code>'));
 		o.value('auto', _('Automatic'));
 		o.value('no', _('disabled'));
 		o.value('48');
@@ -29,56 +29,14 @@ return network.registerProtocol('dhcpv6', {
 		o.value('56');
 		o.value('60');
 		o.value('64');
-		o.value('__custom__', _('Custom'));
 		o.default = 'auto';
-		o.rmempty = false;
-		o.cfgvalue = function(section_id) {
-			var value = this.section.cfgvalue(section_id, 'reqprefix');
-			if (value == null || value === '')
-				return 'auto';
-			return (reqprefixChoices.indexOf(value) > -1) ? value : '__custom__';
-		};
-		o.write = function(section_id, value) {
-			if (value == '__custom__')
-				return;
 
-			return this.map.data.set('network', section_id, 'reqprefix', value);
-		};
-		o.remove = function() {};
-
-		o = s.taboption('general', form.Value, '_reqprefix_custom', _('Custom IPv6-prefix length'));
-		o.depends('_reqprefix_selector', '__custom__');
-		o.rmempty = true;
-		o.datatype = 'uinteger';
-		o.placeholder = '56';
-		o.cfgvalue = function(section_id) {
-			var value = this.section.cfgvalue(section_id, 'reqprefix');
-			if (value == null || value === '')
-				return '';
-			return (reqprefixChoices.indexOf(value) > -1) ? '' : value;
-		};
-		o.validate = function(section_id, value) {
-			var selector = this.map.lookupOption('_reqprefix_selector', section_id),
-			    selected = selector ? selector[0].formvalue(selector[1]) : null;
-
-			if (selected == '__custom__' && (value == null || value === ''))
-				return _('Please enter a custom IPv6-prefix length');
-
-			return true;
-		};
-		o.write = function(section_id, value) {
-			var selector = this.map.lookupOption('_reqprefix_selector', section_id),
-			    selected = selector ? selector[0].formvalue(selector[1]) : null;
-
-			if (selected != '__custom__')
-				return;
-
-			return this.map.data.set('network', section_id, 'reqprefix', value);
-		};
-		o.remove = function() {};
+		o = s.taboption('general', form.Flag, 'extendprefix', _('Extend prefix'), _('Extend 3GPP WAN interface /64 prefix via PD to LAN (RFC 7278)'));
 
 		o = s.taboption('general', form.Flag, 'norelease', _('Do not send a Release when restarting'),
 						_('Enable to minimise the chance of prefix change after a restart'));
+		o.default = '1';
+		o.rmempty = false;
 
 		o = s.taboption('advanced', form.Value, 'clientid', _('Client ID to send when requesting DHCP'));
 		o.datatype  = 'hexstring';

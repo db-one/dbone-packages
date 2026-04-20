@@ -2,15 +2,20 @@
 	"luci-mod-system-config": {
 		"description": "Grant access to system configuration",
 		"read": {
+			"file": {
+				"/sys/block/zram0/comp_algorithm": [ "read" ]
+			},
 			"ubus": {
-				"luci": [ "getInitList", "getLEDs", "getTimezones", "getUSBDevices" ],
-				"system": [ "info" ]
+				"file": [ "read" ],
+				"luci": [ "getLEDs", "getTimezones", "getUSBDevices", "getUnixtime" ],
+				"rc": [ "list" ]
 			},
 			"uci": [ "luci", "system" ]
 		},
 		"write": {
 			"ubus": {
-				"luci": [ "setInitAction", "setLocaltime", "setPassword" ]
+				"luci": [ "setLocaltime", "setPassword" ],
+				"rc": [ "init" ]
 			},
 			"uci": [ "luci", "system" ]
 		}
@@ -33,9 +38,25 @@
 			},
 			"ubus": {
 				"file": [ "write" ],
-				"luci": [ "setInitAction", "setLocaltime" ]
+				"luci": [ "setLocaltime" ]
 			},
 			"uci": [ "dropbear" ]
+		}
+	},
+
+	"luci-mod-system-repokeys": {
+		"description": "Grant access to Software Repository Public Key management",
+		"read": {
+			"file": {
+				"/etc/opkg/keys/*": [ "read" ],
+				"/etc/apk/keys/*": [ "read" ]
+			}
+		},
+		"write": {
+			"file": {
+				"/etc/opkg/keys/*": [ "write" ],
+				"/etc/apk/keys/*": [ "write" ]
+			}
 		}
 	},
 
@@ -45,9 +66,6 @@
 			"uci": [ "uhttpd" ]
 		},
 		"write": {
-			"ubus": {
-				"luci": [ "setInitAction" ]
-			},
 			"uci": [ "uhttpd" ]
 		}
 	},
@@ -61,7 +79,7 @@
 			},
 			"ubus": {
 				"file": [ "read" ],
-				"luci": [ "getInitList" ]
+				"rc": [ "list" ]
 			}
 		},
 		"write": {
@@ -70,7 +88,7 @@
 			},
 			"ubus": {
 				"file": [ "write" ],
-				"luci": [ "setInitAction" ]
+				"rc": [ "init" ]
 			}
 		}
 	},

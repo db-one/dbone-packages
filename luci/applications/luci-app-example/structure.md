@@ -3,34 +3,35 @@
 ```
 .
 ├── htdocs
-│   └── luci-static
-│       └── resources
-│           └── view
-│               └── example
-│                   ├── form.js
-│                   ├── htmlview.js
-│                   └── rpc.js
+│   └── luci-static
+│       └── resources
+│           └── view
+│               └── example
+│                   ├── form.js
+│                   ├── htmlview.js
+│                   ├── rpc-jsonmap-tablesection.js
+│                   ├── rpc-jsonmap-typedsection.js
+│                   └── rpc.js
 ├── Makefile
 ├── po
-│   ├── templates
-│   │   └── example.pot
+│   ├── templates
+│   │   └── example.pot
 ├── README.md
 └── root
     ├── etc
-    │   ├── luci.example.yaml
-    │   └── uci-defaults
-    │       └── 80_example
+    │   ├── luci.example.yaml
+    │   └── uci-defaults
+    │       └── 80_example
     └── usr
-        ├── libexec
-        │   └── rpcd
-        │       └── luci.example
         └── share
             ├── luci
-            │   └── menu.d
-            │       └── luci-app-example.json
+            │   └── menu.d
+            │       └── luci-app-example.json
             └── rpcd
-                └── acl.d
-                    └── luci-app-example.json
+                ├── acl.d
+                │   └── luci-app-example.json
+                └── ucode
+                    └── example.uc
 
 ```
 
@@ -68,9 +69,7 @@ LuCI apps do not have to have any additional files such as Lua scripts or UCI de
 
 ### Installing additional files
 
-Any additional files needed by this application should be placed in `root/` using the directory tree that applies. This example application needs a RPCd script to be installed, so it places a file in `root/usr/libexec/rpcd/` and calls it `luci.example`. Scripts must have their execution bit set, and committed to the git repository with the bit set.
-
-This example application also installs a file in `/etc/` by putting it in `root/etc/luci.example.yaml`.
+Any additional files needed by this application should be placed in `root/` using the directory tree that applies. This example application needs a ucode RPCd script to be installed, so it places a file in `root/usr/share/rpcd/ucode` and called `example.uc`.
 
 The OpenWrt packaging system will install these files automatically.
 

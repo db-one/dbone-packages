@@ -2,10 +2,9 @@ include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:= Net-SNMP LuCI interface
 LUCI_DEPENDS:=+luci-base +snmpd
-LUCI_PKGARCH:=all
 LUCI_DESCRIPTION:=Some common net-snmp config items. In no way is this comprehensive.
 
-PKG_MAINTAINER:= Karl Palsson <karlp@etactica.com>
+PKG_MAINTAINER:= Christian Korber <ck@dev.tdt.de>
 PKG_LICENSE:=Apache-2.0
 
 include ../../luci.mk

@@ -279,10 +279,14 @@ function net.host_hints(callback)
 end
 
 function net.conntrack(callback)
-	local ok, nfct = pcall(io.lines, "/proc/net/nf_conntrack")
-	if not ok or not nfct then
+	local ok, fd = pcall(io.open, "/proc/net/nf_conntrack")
+	if not ok or not fd then
+		ok, fd = pcall(io.popen, "/usr/sbin/conntrack -L -o extended", "r")
+	end
+	if not ok or not fd then
 		return nil
 	end
+	nfct = fd:lines()
 
 	local line, connt = nil, (not callback) and { }
 	for line in nfct do
@@ -531,7 +535,7 @@ function user.checkpasswd(username, pass)
 end
 
 function user.setpasswd(username, password)
-	return os.execute("(echo %s; sleep 1; echo %s) | passwd %s >/dev/null 2>&1" %{
+	return os.execute("(echo %s; sleep 1; echo %s) | busybox passwd %s >/dev/null 2>&1" %{
 		luci.util.shellquote(password),
 		luci.util.shellquote(password),
 		luci.util.shellquote(username)

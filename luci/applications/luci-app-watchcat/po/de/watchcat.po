@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2024-02-23 04:23+0000\n"
-"Last-Translator: ssantos <ssantos@web.de>\n"
+"PO-Revision-Date: 2026-03-23 18:10+0000\n"
+"Last-Translator: Werner Schleifer <werner.schleifer@gmail.com>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationswatchcat/de/>\n"
 "Language: de\n"
@@ -10,7 +10,33 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.5-dev\n"
+"X-Generator: Weblate 5.17-dev\n"
+
+#: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:94
+msgid ""
+"<i>Applies to Ping Reboot and Periodic Reboot modes</i> <br /> When "
+"rebooting the router, the service will trigger a soft reboot. Entering a non-"
+"zero value here will trigger a delayed hard reboot if the soft reboot were "
+"to fail. Enter the number of seconds to wait for the soft reboot to fail or "
+"use 0 to disable the forced reboot delay."
+msgstr ""
+"<i>Gilt für die Modi \"Ping Reboot und regelmäßiger Reboot\"</i> <br /> Wenn "
+"der Router neu gestartet wird, löst der Dienst einen Soft Reboot aus. Wenn "
+"Sie hier einen Wert ungleich Null eingeben, wird ein verzögerter Hard Reboot "
+"ausgelöst, wenn der Soft Reboot fehlschlägt. Geben Sie die Anzahl der "
+"Sekunden ein, die gewartet werden sollen, bis der Soft-Reboot fehlschlägt, "
+"oder verwenden Sie 0, um die Verzögerung des erzwungenen Neustarts zu "
+"deaktivieren."
+
+#: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:111
+msgid ""
+"<i>Applies to Ping Reboot and Restart Interface modes</i> <br /> If using "
+"ModemManager, you can have Watchcat restart your ModemManager interface by "
+"specifying its name."
+msgstr ""
+"<i>Gilt für die Modi \"Ping Reboot und Restart Schnittstelle\"</i> <br /> "
+"Wenn Sie den ModemManager verwenden, können Sie Watchcat veranlassen,um das "
+"ModemManager-Interface neu zu starten, indem Sie dessen Namen angeben."
 
 #: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:104
 msgid ""
@@ -25,31 +51,9 @@ msgstr ""
 msgid "Address family for pinging the host"
 msgstr "Adressfamilie für pingen des Hosts"
 
-#: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:94
-msgid ""
-"Applies to Ping Reboot and Periodic Reboot modes</i> <br /> When rebooting "
-"the router, the service will trigger a soft reboot. Entering a non-zero "
-"value here will trigger a delayed hard reboot if the soft reboot were to "
-"fail. Enter the number of seconds to wait for the soft reboot to fail or use "
-"0 to disable the forced reboot delay."
-msgstr ""
-"Gilt für die Modi \"Ping Reboot und regelmäßiger Reboot\"</i> <br /> Wenn "
-"der Router neu gestartet wird, löst der Dienst einen Soft Reboot aus. Wenn "
-"Sie hier einen Wert ungleich Null eingeben, wird ein verzögerter Hard Reboot "
-"ausgelöst, wenn der Soft Reboot fehlschlägt. Geben Sie die Anzahl der "
-"Sekunden ein, die gewartet werden sollen, bis der Soft-Reboot fehlschlägt, "
-"oder verwenden Sie 0, um die Verzögerung des erzwungenen Neustarts zu "
-"deaktivieren."
-
-#: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:111
-msgid ""
-"Applies to Ping Reboot and Restart Interface modes</i> <br /> If using "
-"ModemManager, you can have Watchcat restart your ModemManger interface by "
-"specifying its name."
-msgstr ""
-"Gilt für die Modi \"Ping Reboot und Restart Schnittstelle<\"/i> <br /> Wenn "
-"Sie den ModemManager verwenden, können Sie Watchcat veranlassen,um das "
-"ModemManger-Interface neu zu starten, indem Sie dessen Namen angeben."
+#: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:65
+msgid "Any"
+msgstr "Beliebig"
 
 #: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:84
 msgid "Big: 248 bytes"
@@ -83,8 +87,8 @@ msgstr ""
 "einzurichten."
 
 #: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:52
-msgid "Host To Check"
-msgstr "Host zu überprüfen"
+msgid "Hosts To Check"
+msgstr "Zu überprüfende Hosts"
 
 #: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:71
 msgid ""
@@ -107,8 +111,8 @@ msgid "Huge: 1492 bytes"
 msgstr "Riesig: 1492 bytes"
 
 #: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:52
-msgid "IP address or hostname to ping."
-msgstr "IP-Adresse oder Hostname zum Anpingen."
+msgid "IP addresses or hostnames to ping."
+msgstr "IP-Adressen oder Hostnamen für Ping."
 
 #: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:118
 msgid ""
@@ -178,7 +182,7 @@ msgstr "Ping Paket größe"
 
 #: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:27
 msgid "Ping Reboot"
-msgstr "Ping neustart"
+msgstr "Ping-Neustart"
 
 #: applications/luci-app-watchcat/htdocs/luci-static/resources/view/watchcat.js:23
 msgid ""

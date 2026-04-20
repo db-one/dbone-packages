@@ -159,8 +159,6 @@ h6 {
 
 html {
 	overflow-y: hidden;
-	-webkit-text-size-adjust: 100%;
-	-ms-text-size-adjust: 100%;
 }
 
 body {
@@ -212,7 +210,7 @@ select,
 select:not([multiple="multiple"]):focus,
 input:not(.cbi-button):focus,
 .cbi-dropdown:focus {
-	border-color: var(--primary-color);
+	border-color: var(--main-color);
 }
 
 .cbi-dropdown,
@@ -345,9 +343,11 @@ small {
 	float: left;
 	overflow-x: auto;
 	width: calc(0% + 15rem);
+	min-width: max-content;
 	height: calc(100% - 4rem);
-	background-color: var(--white-color);
+	background-color: var(--menu-bg-color);
 	transition: visibility 400ms, width 400ms;
+	z-index: 800;
 }
 
 .main-right {
@@ -370,7 +370,9 @@ small {
 	float: left;
 }
 
-.nowrap:not(.td) {
+.nowrap:not(.td span) {
+/*	Sometimes you need to wrap: badges on narrow screens look weird 
+	and nowrap defeats other width constraints, so exclude span */
 	white-space: nowrap;
 }
 
@@ -379,8 +381,8 @@ small {
 }
 
 header {
-	color: var(--secondary-color);
-	background: var(--primary-color);
+	color: var(--header-color);
+	background: var(--header-bg);
 }
 
 header > .fill > .container {
@@ -407,7 +409,7 @@ header > .fill > .container > .brand {
 	cursor: default;
 	vertical-align: text-bottom;
 	text-decoration: none;
-	color: var(--white-color);
+	color: var(--header-color);
 }
 
 header > .fill > .container > .status {
@@ -429,8 +431,8 @@ header > .fill > .container > .status > * {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	color: var(--white-color);
-	background: var(--secondary-color);
+	color: var(--header-color);
+	background: var(--header-bg);
 	padding: .5rem;
 	transition: box-shadow .2s;
 	box-shadow: 0 2px 5px rgb(0 0 0 / 26%);
@@ -463,9 +465,9 @@ header > .fill > .container > .status > * {
 #modemenu > li.divider {
 	margin-left: .25rem;
 	margin-right: .25rem;
-	border: .5rem solid var(--gray-color);
-	border-left: 1px solid var(--gray-color);
-	border-right: 1px solid var(--gray-color);
+	border: .5rem solid var(--submenu-bg-hover);
+	border-left: 1px solid var(--submenu-bg-hover);
+	border-right: 1px solid var(--submenu-bg-hover);
 	border-radius: 1rem;
 }
 
@@ -499,36 +501,36 @@ header > .fill > .container > .status > * {
 
 .alert-message.notice,
 .label.notice {
-	background-color: var(--notice-color);
-	color: var(--on-notice-color);
+	background-color: var(--notice-color) !important;
+	color: var(--on-notice-color) !important;
 }
 
 .alert-message.danger,
 .btn.danger,
 .label.danger {
-	background-color: var(--danger-color);
-	color: var(--on-danger-color);
+	background-color: var(--danger-color) !important;
+	color: var(--on-danger-color) !important;
 }
 
 .alert-message.warning,
 .btn.warning,
 .label.warning {
-	background-color: var(--warning-color);
-	color: var(--on-warning-color);
+	background-color: var(--warning-color) !important;
+	color: var(--on-warning-color) !important;
 }
 
 .alert-message.success,
 .btn.success,
 .label.success {
-	background-color: var(--success-color);
-	color: var(--on-success-color);
+	background-color: var(--success-color) !important;
+	color: var(--on-success-color) !important;
 }
 
 .alert-message.error,
 .btn.error,
 .label.error {
-	background-color: var(--on-error-color);
-	color: var(--error-color);
+	background-color: var(--error-color) !important;
+	color: var(--on-error-color) !important;
 }
 
 [data-indicator]:not([data-style="inactive"]) {
@@ -538,6 +540,17 @@ header > .fill > .container > .status > * {
 .container .alert,
 .container .alert-message {
 	margin-top: 1rem;
+}
+
+/* Fix for table text in notifications - ensures table content inherits notification colors */
+.alert-message.notice table,
+.alert-message.notice .table,
+.alert-message.notice td,
+.alert-message.notice th,
+.alert-message.notice .td,
+.alert-message.notice .th {
+	color: var(--on-notice-color) !important;
+	background: transparent !important;
 }
 
 .main > .main-left > .nav {
@@ -561,7 +574,7 @@ header > .fill > .container > .status > * {
 
 .main > .main-left > .nav > li a {
 	display: block;
-	color: #5f6368;
+	color: var(--menu-color);
 }
 
 .main > .main-left > .nav > li.active > a {
@@ -569,7 +582,7 @@ header > .fill > .container > .status > * {
 }
 
 .main > .main-left > .nav > li.active {
-	background-color: var(--primary-color);
+	background-color: var(--submenu-bg-hover-active);
 }
 
 .main > .main-left > .nav > li.slide.active {
@@ -597,7 +610,7 @@ header > .fill > .container > .status > * {
 	width: 100%;
 	padding: .5rem 1rem;
 	text-decoration: none;
-	color: var(--black-color-low);
+	color: var(--main-menu-color);
 }
 
 .main > .main-left > .nav > .slide > .menu::before {
@@ -635,7 +648,7 @@ body[class*="node-"] > .main > .main-left > .nav > .slide > .menu.active::before
 
 .main > .main-left > .nav > li:hover,
 .main > .main-left > .nav > .slide > .menu:hover {
-	background: var(--gray-color);
+	background: var(--submenu-bg-hover);
 }
 
 .main > .main-left > .nav > .slide:hover {
@@ -643,7 +656,7 @@ body[class*="node-"] > .main > .main-left > .nav > .slide > .menu.active::before
 }
 
 .main > .main-left > .nav > .slide > .slide-menu > .active {
-	background-color: var(--primary-color);
+	background-color: var(--submenu-bg-hover-active);
 }
 
 .main > .main-left > .nav > .slide > .slide-menu > li > a {
@@ -657,15 +670,15 @@ body[class*="node-"] > .main > .main-left > .nav > .slide > .menu.active::before
 }
 
 .main > .main-left > .nav > .slide > .slide-menu > li:hover {
-	background: var(--gray-color);
+	background: var(--submenu-bg-hover);
 }
 
 .main > .main-left > .nav > .slide > .slide-menu > li:not(.active):hover > a {
-	color: #5f6368;
+	color: var(--menu-color-hover);
 }
 
 .main > .main-left > .nav > .slide > .slide-menu > .active:hover {
-	background-color: var(--primary-color);
+	background-color: var(--main-color);
 }
 
 /* ripple effect */
@@ -756,7 +769,7 @@ h5 {
 #cbi-wireless > #wifi_assoclist_table,
 [data-tab-title],
 [data-page^="admin-system-admin"]:not(.node-main-login) .cbi-map:not(#cbi-dropbear),
-[data-page="admin-system-opkg"] #maincontent > .container {
+[data-page="admin-system-package-manager"] #maincontent > .container {
 	font-family: inherit;
 	font-weight: normal;
 	font-style: normal;
@@ -1156,7 +1169,7 @@ td > table > tbody > tr > td,
 
 .tabs > li[class~="active"],
 .tabs > li:hover {
-	border-bottom-color: var(--primary-color);
+	border-bottom-color: var(--main-color);
 }
 
 .tabs > li:hover {
@@ -1172,7 +1185,7 @@ td > table > tbody > tr > td,
 }
 
 .tabs > li[class~="active"] > a {
-	color: var(--primary-color);
+	color: var(--main-color);
 }
 
 .cbi-tabmenu {
@@ -1255,6 +1268,7 @@ td > table > tbody > tr > td,
 	display: inline-block;
 	width: 100%;
 	padding: .35rem 1rem .2rem 1rem;
+	align-items: baseline;
 }
 
 .cbi-value ul {
@@ -1302,30 +1316,20 @@ td > table > tbody > tr > td,
 }
 
 .td[data-title]::before {
-	font-weight: bold;
-	display: none;
-	padding: .25rem 0;
-	content: attr(data-title) ":\20";
-	text-align: left;
-	white-space: nowrap;
+	content: none;
 }
 
 .tr.placeholder .td[data-title]::before {
 	display: none;
 }
 
+.tr.cbi-section-table-titles {
+	font-weight: bold;
+}
+
 .tr[data-title]::before,
 .tr.cbi-section-table-titles.named::before {
-	font-weight: bold;
-	display: table-cell;
-	align-self: center;
-	flex: 1 1 5%;
-	padding: .25rem;
-	content: attr(data-title) "\20";
-	text-align: center;
-	vertical-align: middle;
-	white-space: normal;
-	word-wrap: break-word;
+	content: none;
 }
 
 .cbi-rowstyle-1 {
@@ -1378,10 +1382,12 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 	max-width: 25rem;
 	margin-right: 2em;
 	padding: .5em .25em .25em 0;
-	pointer-events: none;
+	pointer-events: auto; /* needed for drag-and-drop in UIDynamicList */
 	color: #666;
 	border-bottom: 2px solid rgba(0, 0, 0, .26);
 	outline: 0;
+	cursor: move; /* drag-and-drop */
+	user-select: text; /* text selection in drag-and-drop */
 }
 
 .cbi-dynlist[name="sshkeys"] > .item {
@@ -1403,9 +1409,21 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 	background-color: var(--red-color-high);
 }
 
+/* indication line for drag-and-drop in UIDynamicList*/
+.cbi-dynlist > .item.drag-over {
+	border-top: 1px solid black;
+}
+
+/* Make item being dragged in UIDynamicList partially transparent*/
+.cbi-dynlist > .item.dragging {
+	opacity: 0.5;
+}
+
+/* prevent pointer changing when over the span element in UIDynamicList */
 .cbi-dynlist > .item > span {
 	white-space: normal;
 	word-break: break-word;
+	pointer-events: none;
 }
 
 .cbi-dynlist > .add-item {
@@ -1413,6 +1431,16 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 	align-items: center;
 	width: 100%;
 	min-width: 16rem;
+}
+
+/* indication line for drag-and-drop in UIDynamicList*/
+.cbi-dynlist > .add-item > .cbi-input-text.drag-over {
+	border-top: 1px solid black;
+}
+
+/* indication line for drag-and-drop in UIDynamicList*/
+.cbi-dynlist > .add-item > .cbi-button-add.drag-over {
+	border-top: 1px solid black;
 }
 
 .cbi-dynlist > .add-item:not([ondrop]) > input {
@@ -1438,6 +1466,12 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 	max-width: 25rem;
 	height: auto;
 	margin-top: -3px;
+}
+
+.cbi-dropdown img {
+	/* the following are necessary to constrain (vector) images of any size */
+	max-height: 1.6em;  /* Adjusts image height to fit slightly larger than text line height */
+	width: auto;  /* Preserves aspect ratio */
 }
 
 .cbi-dropdown > ul {
@@ -1561,7 +1595,15 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 	border: thin solid #918e8c;
 	background: #f6f6f6;
 	box-shadow: 0 0 4px #918e8c;
-	color: var(--black-color-low);
+	color: var(--main-menu-color);
+}
+
+.cbi-dropdown.btn.cbi-button.cbi-button-positive.important > ul > li[display] {
+	color: var(--white-color);
+}
+
+.cbi-dropdown[open] > ul.dropdown > li[tabindex] {
+	color: var(--black-color) !important;
 }
 
 .cbi-dropdown > ul > li[display],
@@ -1596,6 +1638,7 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 
 .cbi-dropdown[open] > ul.dropdown > li[selected] {
 	background: #b0d0f0;
+	color: var(--black-color);
 }
 
 .cbi-dropdown[open] > ul.dropdown > li.focus,
@@ -1606,6 +1649,7 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 .cbi-dropdown[open] > ul.dropdown > li:last-child {
 	margin-bottom: 0;
 	border-bottom: 0;
+	color: var(--black-color);
 }
 
 .cbi-dropdown[open] > ul.dropdown > li[unselectable] {
@@ -1643,7 +1687,7 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 	width: 0;
 	height: 100%;
 	transition: width .25s ease-in;
-	background: var(--light-blue-color);
+	background: var(--bar-bg);
 }
 
 .cbi-progressbar::after {
@@ -1749,6 +1793,20 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
 	max-height: none;
 }
 
+.modal .button-row {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+
+.modal .button-row > button:not(:first-of-type) {
+	margin-right: .5em;
+}
+
+.modal .button-row > button:first-of-type {
+	margin-right: auto;
+}
+
 body.modal-overlay-active {
 	overflow: hidden;
 	height: 100vh;
@@ -1772,7 +1830,7 @@ body.modal-overlay-active #modal_overlay {
 	left: .2em;
 	width: 32px;
 	content: "";
-	background: url(../resources/icons/loading.gif) no-repeat center;
+	background: url(../resources/icons/loading.svg) no-repeat center;
 	background-size: 16px;
 }
 
@@ -1834,6 +1892,12 @@ body.modal-overlay-active #modal_overlay {
 	border-bottom: thin solid #ccc;
 	background: #eee;
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 1px 2px rgba(0, 0, 0, .05);
+}
+
+.ifacebadge img {
+	width: 32px;
+	height: 32px;
+	vertical-align: middle;
 }
 
 td > .ifacebadge,
@@ -1899,7 +1963,6 @@ td > .ifacebadge,
 
 #syslog {
 	font-size: small;
-	overflow-y: hidden;
 	width: 100%;
 	min-height: 15rem;
 	padding: 1rem;
@@ -2016,11 +2079,16 @@ td > .ifacebadge,
 }
 
 .ifacebox-head.active {
-	background: var(--light-blue-color);
+	background: var(--bar-bg);
 }
 
 .ifacebox-body {
 	padding: .25em;
+}
+
+#cbi-network-interface .ifacebox img {
+	width: 24px;
+	height: 24px;
 }
 
 .cbi-image-button {
@@ -2143,10 +2211,12 @@ span[data-tooltip] .label {
 .zone-forwards {
 	display: flex;
 	min-width: 10rem;
+	flex-wrap: nowrap;
 }
 
 .zone-forwards > * {
 	flex: 1 1 45%;
+	text-wrap: auto;
 }
 
 .zone-forwards > span {
@@ -2340,19 +2410,19 @@ input[name="nslookup"] {
 	gap: 2px;
 }
 
-[data-page="admin-system-opkg"] div.btn {
+[data-page="admin-system-package-manager"] div.btn {
 	line-height: 3;
 	display: inline;
 	padding: .3rem .6rem;
 }
 
 [data-page^="admin-system-admin"]:not(.node-main-login) .cbi-map:not(#cbi-dropbear),
-[data-page="admin-system-opkg"] #maincontent > .container {
+[data-page="admin-system-package-manager"] #maincontent > .container {
 	margin-top: 2rem;
 	padding-top: .1rem;
 }
 
-[data-page="admin-system-opkg"] #maincontent > .container {
+[data-page="admin-system-package-manager"] #maincontent > .container {
 	margin: 2rem;
 	margin-bottom: 1rem;
 }
@@ -2511,17 +2581,13 @@ input[name="nslookup"] {
 }
 
 /* IE hacks */
-@media all and (-ms-high-contrast: none) {
+@media all {
 	.main > .main-left > .nav > .slide > .menu::before {
 		top: 30.25%;
 	}
 
 	.main > .main-left > .nav > li:last-child::before {
 		top: 20%;
-	}
-
-	.showSide::before {
-		top: -12px;
 	}
 }
 
@@ -3104,12 +3170,12 @@ input[name="nslookup"] {
 	::-webkit-scrollbar-thumb {
 		background: #9e9e9e;
 	}
-
+/*
 	::-webkit-scrollbar-thumb:hover {
 		background: #757575;
 	}
 
 	::-webkit-scrollbar-thumb:active {
 		background: #424242;
-	}
+	}*/
 }

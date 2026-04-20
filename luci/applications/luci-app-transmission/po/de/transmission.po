@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-17 15:08+0200\n"
-"PO-Revision-Date: 2024-03-02 21:56+0000\n"
+"PO-Revision-Date: 2026-03-04 19:34+0000\n"
 "Last-Translator: ssantos <ssantos@web.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationstransmission/de/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.5-dev\n"
+"X-Generator: Weblate 5.17-dev\n"
 
 #: applications/luci-app-transmission/htdocs/luci-static/resources/view/transmission.js:65
 msgid "Alternative download speed"
@@ -197,9 +197,8 @@ msgid "Off"
 msgstr "Aus"
 
 #: applications/luci-app-transmission/htdocs/luci-static/resources/view/transmission.js:38
-#, fuzzy
 msgid "Open Web Interface"
-msgstr "Open Web-Interface"
+msgstr "Weboberfläche öffnen"
 
 #: applications/luci-app-transmission/htdocs/luci-static/resources/view/transmission.js:153
 msgid "PEX enabled"
@@ -401,14 +400,14 @@ msgstr ""
 
 #: applications/luci-app-transmission/root/usr/share/luci/menu.d/luci-app-transmission.json:3
 msgid "Transmission"
-msgstr "Übertragung"
+msgstr "Transmission"
 
 #: applications/luci-app-transmission/htdocs/luci-static/resources/view/transmission.js:42
 msgid ""
 "Transmission daemon is a simple bittorrent client, here you can configure "
 "the settings."
 msgstr ""
-"Der Transmission-Daemon ist ein einfacher Bittorent-Client. Hier können Sie "
+"Der Transmission-Daemon ist ein einfacher Bittorrent-Client. Hier können Sie "
 "ihn einstellen."
 
 #: applications/luci-app-transmission/htdocs/luci-static/resources/view/transmission.js:116
