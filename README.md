@@ -10,9 +10,7 @@
 ###### luci-theme-edge    #主题-edge
 ###### luci-theme-argon    #新的argon主题
 #
-###### luci-app-v2ray-server   #V2ray服务端
 ###### luci-app-vlmcsd          #KMS激活服务器
-###### luci-app-filetransfer   #文件传输
 #
 ###  依赖
 
