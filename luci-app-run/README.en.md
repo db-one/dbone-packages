@@ -1,12 +1,15 @@
 # luci-app-run
 
 `luci-app-run` is a small OpenWrt LuCI application for uploading and running
-makeself-generated `.run` installers.
+scripts and packages.
 
-The package intentionally does not implement an app store or software catalog.
-It only accepts a `.run` file, uploads it to `/tmp/luci-app-run`, marks it
-executable, runs it in the background, and streams the execution log back to the
-LuCI page.
+The package supports uploading `.run`, `.sh`, `.ipk`, and `.apk` files, saving them
+to `/tmp/luci-app-run`, and executing them based on file type:
+- `.run` and `.sh` files: marked executable and run directly
+- `.ipk` files: installed via opkg package manager (for OpenWrt 24.10 and below)
+- `.apk` files: installed via apk package manager (for OpenWrt 25.12 and above)
+
+The execution log is streamed back to the LuCI page.
 
 Large uploads use a one-time-token CGI endpoint at
 `/cgi-bin/luci-app-run-upload` instead of base64-over-ubus chunking. This keeps
@@ -39,7 +42,7 @@ format should be produced by the OpenWrt SDK tooling.
 
 ## Notes
 
-- Only files ending in `.run` are accepted.
+- Only files ending in `.run`, `.sh`, `.ipk`, or `.apk` are accepted.
 - Uploads larger than 256 MiB are rejected by the backend.
 - Only one installer can run at a time.
 - Uploaded files and logs are temporary and live below `/tmp/luci-app-run`.
