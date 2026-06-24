@@ -300,10 +300,12 @@ return view.extend({
 				if (self.currentFileType === '.sh') {
 					self.showArgsDialog(function (args) {
 						if (args !== null) {
+							log.textContent = '';
 							self.startRun(runButton, state, args.trim());
 						}
 					});
 				} else {
+					log.textContent = '';
 					self.startRun(runButton, state, '');
 				}
 			}
