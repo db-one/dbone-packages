@@ -98,9 +98,17 @@ is_running() {
     
     echo "$cmdline" | grep -q "luci-app-run" && return 0
     
-    echo "$cmdline" | grep -q "[^a-zA-Z0-9]\.run\(\s\|$\)" && return 0
+    # Check for .run files (must be followed by space or end of string)
+    case "$cmdline" in
+        *".run "*) return 0 ;;
+        *".run") return 0 ;;
+    esac
     
-    echo "$cmdline" | grep -q "[^a-zA-Z0-9]\.sh\(\s\|$\)" && return 0
+    # Check for .sh files (must be followed by space or end of string)
+    case "$cmdline" in
+        *".sh "*) return 0 ;;
+        *".sh") return 0 ;;
+    esac
     
     return 1
 }
