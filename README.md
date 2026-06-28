@@ -39,6 +39,7 @@
 ###### luci-app-control-weburl    #网址过滤
 ###### luci-app-control-webrestriction    #访问限制
 ###### luci-app-ddnsto    #小宝开发的DDNS.to内网穿透
+###### luci-app-athena-led    #京东云雅典娜AX6600LED屏幕控制
 ###### luci-app-bandix    #OpenWrt 网络流量监控
 ###### luci-app-quickfile    #quickfile文件管理器
 ###### luci-app-serverchan    #微信推送
