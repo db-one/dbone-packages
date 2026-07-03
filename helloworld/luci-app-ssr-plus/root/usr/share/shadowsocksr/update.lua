@@ -180,6 +180,8 @@ local function update(url, file, type, file2)
 			apple:close()
 			if new_appledns and new_appledns ~= "" then
 				generate_apple(type)
+			else
+				os.remove("/tmp/ssr-update.tmp")
 			end
 		end
 		if type == "ad_data" then
