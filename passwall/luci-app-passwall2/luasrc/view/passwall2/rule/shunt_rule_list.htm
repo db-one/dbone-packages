@@ -180,6 +180,7 @@ table td, .table .td {
 		let firstDataRow = parent.querySelector("tr:not(.cbi-section-table-titles)");
 		if (firstDataRow && firstDataRow !== row) {
 			parent.insertBefore(row, firstDataRow);
+			set_order(group);
 		}
 	}
 
