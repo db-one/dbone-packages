@@ -11,8 +11,8 @@
 
 ## About
 
-[Fail2ban](https://github.com/fail2ban/fail2ban) Docker image to ban hosts that cause
-multiple authentication errors.
+[Fail2ban](https://github.com/fail2ban/fail2ban) Docker image to ban hosts that
+cause multiple authentication errors.
 
 > [!TIP] 
 > Want to be notified of new releases? Check out 🔔 [Diun (Docker Image Update Notifier)](https://github.com/crazy-max/diun)
@@ -22,6 +22,7 @@ ___
 
 * [Build locally](#build-locally)
 * [Image](#image)
+* [Supported tags](#supported-tags)
 * [Environment variables](#environment-variables)
 * [Volumes](#volumes)
 * [Usage](#usage)
@@ -35,7 +36,9 @@ ___
   * [Use fail2ban-client](#use-fail2ban-client)
   * [Global jail configuration](#global-jail-configuration)
   * [Custom jails, actions and filters](#custom-jails-actions-and-filters)
+  * [GeoIP2](#geoip2)
   * [Sending email using a sidecar container](#sending-email-using-a-sidecar-container)
+  * [systemd journal backend](#systemd-journal-backend)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -45,11 +48,17 @@ ___
 git clone https://github.com/crazy-max/docker-fail2ban.git
 cd docker-fail2ban
 
-# Build image and output to docker (default)
+# Build Alpine image and output to docker (default)
 docker buildx bake
 
-# Build multi-platform image
+# Build Alpine multi-platform image
 docker buildx bake image-all
+
+# Build Debian image and output to docker
+docker buildx bake image-debian-local
+
+# Build Debian multi-platform image
+docker buildx bake image-debian-all
 ```
 
 ## Image
@@ -59,21 +68,13 @@ docker buildx bake image-all
 | [Docker Hub](https://hub.docker.com/r/crazymax/fail2ban/)                                           | `crazymax/fail2ban`          |
 | [GitHub Container Registry](https://github.com/users/crazy-max/packages/container/package/fail2ban) | `ghcr.io/crazy-max/fail2ban` |
 
-Following platforms for this image are available:
+## Supported tags
 
-```
-$ docker buildx imagetools inspect crazymax/fail2ban --format "{{json .Manifest}}" | \
-  jq -r '.manifests[] | select(.platform.os != null and .platform.os != "unknown") | .platform | "\(.os)/\(.architecture)\(if .variant then "/" + .variant else "" end)"'
+* `latest`, `<version>`, `edge`
+* `debian`, `<version>-debian`, `edge-debian`
 
-linux/386
-linux/amd64
-linux/arm/v6
-linux/arm/v7
-linux/arm64
-linux/ppc64le
-linux/riscv64
-linux/s390x
-```
+> `<version>` has to be replaced with one of the Fail2ban releases available
+> (e.g. `1.1.0`). Tags without a `debian` suffix are Alpine-based.
 
 ## Environment variables
 
@@ -81,7 +82,7 @@ linux/s390x
 * `F2B_LOG_TARGET`: Set the log target. This could be a file, SYSLOG, STDERR or STDOUT (default `STDOUT`)
 * `F2B_LOG_LEVEL`: Log level output (default `INFO`)
 * `F2B_DB_PURGE_AGE`: Age at which bans should be purged from the database (default `1d`)
-* `IPTABLES_MODE`: Choose between iptables `nft` or `legacy` mode. (default `auto`)
+* `IPTABLES_MODE`: Set iptables mode to `auto`, `nft` or `legacy` (default `auto`)
 
 ## Volumes
 
@@ -203,11 +204,32 @@ exists, it will be overriden.
 > [!WARNING]
 > Container has to be restarted to propagate changes
 
+### GeoIP2
+
+If you want to use MaxMind GeoIP2 databases with Fail2Ban, see the example in
+[examples/geoip](examples/geoip). It runs the
+[geoip-updater](https://github.com/crazy-max/geoip-updater) image as a sidecar,
+mounts the downloaded `GeoLite2-Country.mmdb` database in `/data/geoip`, and
+uses a custom `ignorecommand`.
+
+In this example, `GEOIP_ALLOWED_COUNTRIES=FR,BE,CH` means IPs from these
+countries are ignored by Fail2Ban and will not be banned. IPs from other
+countries follow the regular jail behavior. This is not proactive country
+blocking, Fail2Ban still only reacts to matching log entries.
+
+You need to set `LICENSE_KEY` in `geoip-updater.env`.
+
 ### Sending email using a sidecar container
 
 If you want to send emails using a sidecar container, see the example in
 [examples/smtp](examples/smtp). It uses the [smtp.py action](https://github.com/fail2ban/fail2ban/blob/1.1.0/config/action.d/smtp.py)
 and [msmtpd SMTP relay](https://github.com/crazy-max/docker-msmtpd) image.
+
+### systemd journal backend
+
+If you want to use Fail2ban's `backend = systemd`, see the example in
+[examples/systemd](examples/systemd). It uses the Debian image variant with
+Python systemd bindings and mounts the host journal read-only.
 
 ## Contributing
 

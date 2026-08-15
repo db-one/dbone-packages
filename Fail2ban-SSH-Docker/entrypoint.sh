@@ -27,8 +27,9 @@ sed -i "s/#allowipv6 =.*/allowipv6 = auto/g" /etc/fail2ban/fail2ban.conf
 
 # Check custom actions
 echo "Checking for custom actions in /data/action.d..."
-actions=$(ls -l /data/action.d | grep -E '^-' | awk '{print $9}')
-for action in ${actions}; do
+for action_path in /data/action.d/*; do
+  [ -f "$action_path" ] || continue
+  action="${action_path##*/}"
   if [ -f "/etc/fail2ban/action.d/${action}" ]; then
     echo "  WARNING: ${action} already exists and will be overriden"
     rm -f "/etc/fail2ban/action.d/${action}"
@@ -39,8 +40,9 @@ done
 
 # Check custom filters
 echo "Checking for custom filters in /data/filter.d..."
-filters=$(ls -l /data/filter.d | grep -E '^-' | awk '{print $9}')
-for filter in ${filters}; do
+for filter_path in /data/filter.d/*; do
+  [ -f "$filter_path" ] || continue
+  filter="${filter_path##*/}"
   if [ -f "/etc/fail2ban/filter.d/${filter}" ]; then
     echo "  WARNING: ${filter} already exists and will be overriden"
     rm -f "/etc/fail2ban/filter.d/${filter}"
@@ -58,12 +60,17 @@ elif [ "$IPTABLES_MODE" = "legacy" ]; then
   iptablesLegacy=1
 fi
 if [ "$iptablesLegacy" -eq 1 ]; then
-  ln -sf /usr/sbin/xtables-legacy-multi /usr/sbin/iptables
-  ln -sf /usr/sbin/xtables-legacy-multi /usr/sbin/iptables-save
-  ln -sf /usr/sbin/xtables-legacy-multi /usr/sbin/iptables-restore
-  ln -sf /usr/sbin/xtables-legacy-multi /usr/sbin/ip6tables
-  ln -sf /usr/sbin/xtables-legacy-multi /usr/sbin/ip6tables-save
-  ln -sf /usr/sbin/xtables-legacy-multi /usr/sbin/ip6tables-restore
+  if command -v update-alternatives > /dev/null 2>&1; then
+    update-alternatives --set iptables /usr/sbin/iptables-legacy
+    update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+  else
+    ln -sf /usr/sbin/xtables-legacy-multi /usr/sbin/iptables
+    ln -sf /usr/sbin/xtables-legacy-multi /usr/sbin/iptables-save
+    ln -sf /usr/sbin/xtables-legacy-multi /usr/sbin/iptables-restore
+    ln -sf /usr/sbin/xtables-legacy-multi /usr/sbin/ip6tables
+    ln -sf /usr/sbin/xtables-legacy-multi /usr/sbin/ip6tables-save
+    ln -sf /usr/sbin/xtables-legacy-multi /usr/sbin/ip6tables-restore
+  fi
 fi
 
 iptables -V
