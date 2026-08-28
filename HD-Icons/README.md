@@ -12,7 +12,7 @@
 [![Last commit](https://img.shields.io/github/last-commit/xushier/HD-Icons?style=flat-square&color=6c5ce7)](https://github.com/xushier/HD-Icons/commits/main)
 [![jsDelivr hits](https://data.jsdelivr.com/v1/package/gh/xushier/HD-Icons/badge?style=rounded)](https://www.jsdelivr.com/package/gh/xushier/HD-Icons)
 
-**共 <!--ICONS:total-->1754<!--/ICONS:total--> 个图标，持续更新中**
+**共 <!--ICONS:total-->1809<!--/ICONS:total--> 个图标，持续更新中**
 </div>
 
 ---
@@ -30,7 +30,7 @@
 |------|------|------|
 | 📦 圆角矩形 | `border-radius/` | <!--ICONS:radius-->1083<!--/ICONS:radius--> |
 | ⭕ 圆形 | `circle/` | <!--ICONS:circle-->124<!--/ICONS:circle--> |
-| 🎨 SVG 矢量 | `svg/` | <!--ICONS:svg-->547<!--/ICONS:svg--> |
+| 🎨 SVG 矢量 | `svg/` | <!--ICONS:svg-->602<!--/ICONS:svg--> |
 
 ## 🚀 使用
 
@@ -38,11 +38,16 @@
 
 部署 [HD-Icons-docker](https://github.com/xushier/HD-Icons-docker)，自动同步本仓库更新，支持一键复制、移动端适配与自定义上传。
 
+<details open>
+<summary>☀️ 日间模式 / 🌙 夜间模式</summary>
+
 | 日间模式 | 夜间模式 |
 |----------|----------|
 | <img src="day.png" alt="日间模式" width="380"> | <img src="night.png" alt="夜间模式" width="380"> |
 
-<details>
+</details>
+
+<details open>
 <summary>📱 移动端适配 / 一键复制 / 自定义上传</summary>
 
 | 移动端自适应 | 一键复制地址 | 自定义上传 |
@@ -79,22 +84,22 @@ https://raw.githubusercontent.com/xushier/HD-Icons/main/icons.json
 
 ## 🖼️ 图标预览
 
-### 📦 圆角矩形（<!--ICONS:radius-->1083<!--/ICONS:radius-->）
-
+<details open>
+<summary>📦 圆角矩形（<!--ICONS:radius-->1083<!--/ICONS:radius-->）</summary>
 <div align="center">
   <img src="_icons-radius.jpg" alt="圆角矩形图标预览" width="90%">
 </div>
+</details>
 
-### ⭕ 圆形（<!--ICONS:circle-->124<!--/ICONS:circle-->）
-
+<details open>
+<summary>⭕ 圆形（<!--ICONS:circle-->124<!--/ICONS:circle-->）</summary>
 <div align="center">
   <img src="_icons-circle.jpg" alt="圆形图标预览" width="90%">
 </div>
+</details>
 
-### 🎨 SVG 矢量（<!--ICONS:svg-->547<!--/ICONS:svg-->）
-
-<details>
-<summary>点击展开 SVG 图标预览</summary>
+<details open>
+<summary>🎨 SVG 矢量（<!--ICONS:svg-->602<!--/ICONS:svg-->）</summary>
 <div align="center">
   <img src="_icons-svg.jpg" alt="SVG 图标预览" width="90%">
 </div>
@@ -106,7 +111,7 @@ https://raw.githubusercontent.com/xushier/HD-Icons/main/icons.json
 - 想贡献图标？Fork 本仓库，把做好的图标（1024×1024 PNG 或 SVG）放进 `inbox/` 对应子目录，提交 PR，压缩入库、索引更新、预览图生成全部自动完成
 - 命名规范：小写英文单词 + 连字符 + 序号，如 `google-map-1.png`
 
-<details>
+<details open>
 <summary>📖 适用场景</summary>
 
 本项目最初为 Unraid Docker 容器图标展示而设计，现已扩展支持多种仪表盘应用、部分 App 及其他用途：
@@ -124,7 +129,7 @@ https://raw.githubusercontent.com/xushier/HD-Icons/main/icons.json
 
 </details>
 
-<details>
+<details open>
 <summary>💬 社区</summary>
 
 | 平台 | 账号/群组 | 链接 |
@@ -161,13 +166,13 @@ https://raw.githubusercontent.com/xushier/HD-Icons/main/icons.json
 
 </details>
 
-## ⭐ Star History
+## ⭐ 支持这个项目
 
 <div align="center">
 
-[![Star History Chart](https://api.star-history.com/svg?repos=xushier/HD-Icons&type=Date)](https://star-history.com/#xushier/HD-Icons&Date)
-
 如果这个项目对您有帮助，请给个 ⭐ Star 支持一下！
+
+📈 完整 Star 增长曲线请查看 [Star History](https://star-history.com/#xushier/HD-Icons&Date)
 
 <sub>Made with ❤️ by xushier</sub>
 
