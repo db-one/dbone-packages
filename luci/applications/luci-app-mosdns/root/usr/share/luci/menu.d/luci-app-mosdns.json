@@ -34,17 +34,9 @@
 			"path": "mosdns/update"
 		}
 	},
-	"admin/services/mosdns/statistics": {
-		"title": "Statistics",
-		"order": 25,
-		"action": {
-			"type": "view",
-			"path": "mosdns/statistics"
-		}
-	},
 	"admin/services/mosdns/logs": {
 		"title": "Logs",
-		"order": 30,
+		"order": 25,
 		"action": {
 			"type": "view",
 			"path": "mosdns/logs"

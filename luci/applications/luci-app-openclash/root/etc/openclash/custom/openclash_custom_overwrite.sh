@@ -119,7 +119,7 @@ CONFIG_FILE="$1"
     #   rescue Exception => e
     #      puts '${LOGTIME} [error] Set General Failed,【' + e.message + '】';
     #   ensure
-    #      YAML.dump(Value, '$CONFIG_FILE');
+    #      File.open('$CONFIG_FILE','w') {|f| YAML.dump(Value, f)};
     #   end" 2>/dev/null >> $LOG_FILE
 
 exit 0

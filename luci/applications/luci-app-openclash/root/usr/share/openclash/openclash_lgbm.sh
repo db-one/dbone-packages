@@ -56,5 +56,6 @@ fi
 
 rm -rf /tmp/Model.bin >/dev/null 2>&1
 
+SLOG_CLEAN
 dec_job_counter_and_restart "$restart"
 del_lock
