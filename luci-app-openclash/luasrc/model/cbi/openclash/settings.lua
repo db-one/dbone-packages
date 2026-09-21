@@ -79,7 +79,6 @@ s:tab("auto_restart", translate("Auto Restart"))
 s:tab("debug", translate("Core Tests"))
 s:tab("developer", translate("Developer Settings"))
 s:tab("version_update", translate("Version Update"))
-s:tab("oixcloud", translate("oixCloud"))
 
 o = s:taboption("op_mode", ListValue, "en_mode", font_red..bold_on..translate("Select Mode")..bold_off..font_off)
 o.description = translate("Select Mode For OpenClash Work, Try Flush DNS Cache If Network Error")
@@ -1423,10 +1422,6 @@ end
 o = s:taboption("debug", DummyValue, "", nil)
 o.template = "openclash/debug"
 
----- oixcloud
-oixcloud_panel = s:taboption("oixcloud", DummyValue, "", nil)
-oixcloud_panel.template = "openclash/oix_login"
-oixcloud_panel.rawhtml = true
 
 local t = {
 	{Commit, Apply}
