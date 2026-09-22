@@ -1,8 +1,8 @@
 {
     "name": "小迪的HD-Icons",
-    "description": "当前数量：1811，更新于：2026-09-01 02:49:31。不定期更新，有需求欢迎提交：github.com/xushier/HD-Icons",
-    "total_count": 1811,
-    "update_at": "2026-09-01 02:49:31",
+    "description": "当前数量：1815，更新于：2026-09-22 10:26:25。不定期更新，有需求欢迎提交：github.com/xushier/HD-Icons",
+    "total_count": 1815,
+    "update_at": "2026-09-22 10:26:25",
     "icons": [
         {
             "name": "115-drive-1",
@@ -3933,6 +3933,14 @@
             "url": "https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/unraid-4.png"
         },
         {
+            "name": "upilot-1",
+            "url": "https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/upilot-1.png"
+        },
+        {
+            "name": "upilot-2",
+            "url": "https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/upilot-2.png"
+        },
+        {
             "name": "upsnap-1",
             "url": "https://raw.githubusercontent.com/xushier/HD-Icons/main/border-radius/upsnap-1.png"
         },
@@ -4779,6 +4787,14 @@
         {
             "name": "unlock-music-1-1",
             "url": "https://raw.githubusercontent.com/xushier/HD-Icons/main/circle/unlock-music-1.png"
+        },
+        {
+            "name": "upilot-1-1",
+            "url": "https://raw.githubusercontent.com/xushier/HD-Icons/main/circle/upilot-1.png"
+        },
+        {
+            "name": "upilot-2-1",
+            "url": "https://raw.githubusercontent.com/xushier/HD-Icons/main/circle/upilot-2.png"
         },
         {
             "name": "verysync-1-1",
