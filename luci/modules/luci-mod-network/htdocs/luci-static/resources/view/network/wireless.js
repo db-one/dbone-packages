@@ -583,8 +583,8 @@ function getConfigCipherValue(section_id, hwtype) {
 function getDisplayEncryption(radioNet) {
 	const hwtype = uci.get('wireless', radioNet.getWifiDeviceName(), 'type');
 	const configured = getConfigEncryptionValue(radioNet.getName(), hwtype);
-	// The QCA iwinfo backend reports OWE as WPA2-PSK.
-	if (isQcaWifiHwtype(hwtype) && configured == 'owe')
+	// The QCA iwinfo backend reports OWE and SAE as WPA2-PSK.
+	if (isQcaWifiHwtype(hwtype) && ['owe', 'sae', 'sae-mixed'].includes(configured))
 		return formatConfigEncryption(configured);
 
 	const encryption = radioNet.getActiveEncryption();
@@ -596,14 +596,20 @@ function getDisplayEncryption(radioNet) {
 }
 
 function getDisplayBSSID(radioNet) {
-	const bssid = uci.get('wireless', radioNet.getName(), 'macaddr') ||
-		uci.get('wireless', radioNet.getWifiDeviceName(), 'macaddr') ||
-		radioNet.getBSSID() || radioNet.getActiveBSSID();
+	// A radio MAC may differ from the BSSID of an individual virtual AP.
+	const candidates = [
+		radioNet.getActiveBSSID(),
+		radioNet.getBSSID(),
+		uci.get('wireless', radioNet.getName(), 'macaddr')
+	];
 
-	if (bssid && bssid != '00:00:00:00:00:00')
-		return String(bssid).toUpperCase();
+	for (const bssid of candidates)
+		if (typeof bssid == 'string' &&
+		    /^(?:[0-9a-f]{2}:){5}[0-9a-f]{2}$/i.test(bssid) &&
+		    bssid != '00:00:00:00:00:00')
+			return bssid.toUpperCase();
 
-	return bssid || null;
+	return null;
 }
 
 function getFtIdentifier(radioNet) {
@@ -3295,6 +3301,10 @@ return view.extend({
 						}
 						else if (e == 'sae') {
 							uci.set('wireless', section_id, 'sae', '1');
+							if (getSecurityBand() == '6g') {
+								uci.set('wireless', section_id, 'sae_pwe', '1');
+								uci.set('wireless', section_id, 'ieee80211w', '2');
+							}
 						}
 						else {
 							uci.unset('wireless', section_id, 'sae');
