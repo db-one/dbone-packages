@@ -22,7 +22,6 @@
 #
 ### 主题
 ###### luci-theme-material   #material-主题
-###### luci-app-argon-config    #argon主题设置（编译时候选上,在固件的‘系统’里面）
 ###### luci-theme-rosy    #主题-rosy
 ###### luci-theme-neobird    #主题-小清新 Neobird
 ###### luci-theme-design    #主题-design 基于Neobird修改
